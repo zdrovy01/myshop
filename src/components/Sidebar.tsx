@@ -121,14 +121,31 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 const navItems: { label: string; href: string; icon: React.ReactNode }[] = [
   { label: "Lista zadań", href: "/", icon: <ListaZadanIcon /> },
   { label: "Analityka", href: "/analytics", icon: <AnalitykaIcon /> },
-  { label: "Pracowniki", href: "/employees", icon: <PracownikiIcon /> },
+  { label: "Pracownicy", href: "/employees", icon: <PracownikiIcon /> },
   { label: "Ustawienia", href: "/settings", icon: <UstawieniaIcon /> },
   { label: "Subskrypcja", href: "/subscription", icon: <SubskrypcjaIcon /> },
 ];
 
-export default function Sidebar() {
+type SidebarUser = {
+  firstName: string | null;
+  lastName: string | null;
+  shopName: string | null;
+  shopAddress: string | null;
+};
+
+export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+
+  const fullName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    "Imię Nazwisko";
+  const secondary = user?.shopAddress || user?.shopName || "—";
+  const initials =
+    [user?.firstName?.[0], user?.lastName?.[0]]
+      .filter(Boolean)
+      .join("")
+      .toUpperCase() || "?";
 
   return (
     <aside
@@ -184,16 +201,14 @@ export default function Sidebar() {
       </nav>
       <div className="mt-auto flex items-center gap-3 border-t border-gray-200 p-4">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-600">
-          IN
+          {initials}
         </div>
         {open && (
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-gray-900">
-              Imię Nazwisko
+              {fullName}
             </p>
-            <p className="truncate text-xs text-gray-500">
-              ul. Przykładowa 1, Warszawa
-            </p>
+            <p className="truncate text-xs text-gray-500">{secondary}</p>
           </div>
         )}
       </div>
