@@ -1,27 +1,60 @@
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getSessionUserId } from "@/lib/session";
-import SettingsForm from "./SettingsForm";
+import Link from "next/link";
 
-export default async function SettingsPage() {
-  const userId = await getSessionUserId();
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("users")
-    .select("phone, first_name, last_name, email, shop_type, shop_name, shop_address")
-    .eq("id", userId)
-    .maybeSingle();
+const options: { label: string; description: string; href: string }[] = [
+  {
+    label: "Ustawienia konta",
+    description: "Dane osobowe, sklep i adres",
+    href: "/settings/account",
+  },
+  {
+    label: "Język",
+    description: "Język aplikacji",
+    href: "/settings/language",
+  },
+];
 
+function ChevronRight() {
   return (
-    <SettingsForm
-      initial={{
-        phone: data?.phone ?? "",
-        firstName: data?.first_name ?? "",
-        lastName: data?.last_name ?? "",
-        email: data?.email ?? "",
-        shopType: data?.shop_type === "other" ? "other" : "zabka",
-        shopName: data?.shop_name ?? "",
-        shopAddress: data?.shop_address ?? "",
-      }}
-    />
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="text-gray-400"
+      aria-hidden="true"
+    >
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <div className="py-8">
+      <h1 className="mb-6 text-2xl font-semibold text-gray-900">Ustawienia</h1>
+
+      <ul className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200">
+        {options.map((opt) => (
+          <li key={opt.href}>
+            <Link
+              href={opt.href}
+              className="flex items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50"
+            >
+              <span className="flex flex-col">
+                <span className="text-sm font-medium text-gray-900">
+                  {opt.label}
+                </span>
+                <span className="text-xs text-gray-500">{opt.description}</span>
+              </span>
+              <ChevronRight />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

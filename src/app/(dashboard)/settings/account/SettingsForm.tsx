@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { updateProfile } from "./actions";
@@ -61,17 +62,17 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
 
   return (
     <div className="py-8">
-      <h1 className="mb-6 text-2xl font-semibold text-gray-900">Ustawienia</h1>
+      <Link
+        href="/settings"
+        className="mb-4 inline-block text-sm text-gray-500 hover:text-gray-900"
+      >
+        ← Ustawienia
+      </Link>
+      <h1 className="mb-6 text-2xl font-semibold text-gray-900">
+        Ustawienia konta
+      </h1>
 
-      <section className="rounded-lg border border-gray-200 p-6">
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold text-gray-900">Konto</h2>
-          <p className="text-sm text-gray-500">
-            Dane Twojego konta i sklepu.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <label className={labelClass}>Numer telefonu</label>
           <input
@@ -174,8 +175,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         >
           {loading ? "..." : "Zapisz zmiany"}
         </button>
-        </form>
-      </section>
+      </form>
     </div>
   );
 }
