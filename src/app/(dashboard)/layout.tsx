@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { getCurrentUser } from "@/lib/user";
 
@@ -7,6 +8,18 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const user = await getCurrentUser();
+
+  // Немає сесії / користувача — на сторінку входу.
+  if (!user) redirect("/login");
+
+  // Профіль неповний — на онбординг.
+  const complete =
+    user.firstName &&
+    user.lastName &&
+    user.email &&
+    user.shopName &&
+    user.shopAddress;
+  if (!complete) redirect("/onboarding");
 
   return (
     <div className="flex min-h-screen">
