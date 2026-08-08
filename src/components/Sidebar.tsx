@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { logout } from "@/app/login/actions";
 
 function ListaZadanIcon() {
   return (
@@ -100,6 +101,26 @@ function SubskrypcjaIcon() {
   );
 }
 
+function LogoutIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (
     <svg
@@ -136,6 +157,13 @@ type SidebarUser = {
 export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   const [open, setOpen] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await logout();
+    router.push("/login");
+    router.refresh();
+  }
 
   const fullName =
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
@@ -204,12 +232,23 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           {initials}
         </div>
         {open && (
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-900">
-              {fullName}
-            </p>
-            <p className="truncate text-xs text-gray-500">{secondary}</p>
-          </div>
+          <>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-gray-900">
+                {fullName}
+              </p>
+              <p className="truncate text-xs text-gray-500">{secondary}</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Wyloguj się"
+              title="Wyloguj się"
+              className="ml-auto shrink-0 rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+            >
+              <LogoutIcon />
+            </button>
+          </>
         )}
       </div>
     </aside>
