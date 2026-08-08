@@ -63,7 +63,15 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
     <div className="py-8">
       <h1 className="mb-6 text-2xl font-semibold text-gray-900">Ustawienia</h1>
 
-      <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
+      <section className="rounded-lg border border-gray-200 p-6">
+        <div className="mb-5">
+          <h2 className="text-lg font-semibold text-gray-900">Konto</h2>
+          <p className="text-sm text-gray-500">
+            Dane Twojego konta i sklepu.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <label className={labelClass}>Numer telefonu</label>
           <input
@@ -166,7 +174,8 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         >
           {loading ? "..." : "Zapisz zmiany"}
         </button>
-      </form>
+        </form>
+      </section>
     </div>
   );
 }
