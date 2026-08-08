@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import BackHeader from "@/components/BackHeader";
 import { updateProfile } from "./actions";
 
 const fieldClass =
@@ -62,15 +62,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
 
   return (
     <div className="py-8">
-      <Link
-        href="/settings"
-        className="mb-4 inline-block text-sm text-gray-500 hover:text-gray-900"
-      >
-        ← Ustawienia
-      </Link>
-      <h1 className="mb-6 text-2xl font-semibold text-gray-900">
-        Ustawienia konta
-      </h1>
+      <BackHeader href="/settings" title="Ustawienia konta" />
 
       <form onSubmit={handleSubmit} className="flex max-w-sm flex-col gap-4">
         <div className="flex flex-col gap-1.5">
