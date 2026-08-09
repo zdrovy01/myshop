@@ -2,6 +2,30 @@
 
 import { useState } from "react";
 
+export type Employee = { name: string; pin: string };
+
+function initials(name: string) {
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0])
+      .join("")
+      .toUpperCase() || "?"
+  );
+}
+
+function askPin(current?: string): string | null {
+  while (true) {
+    const value = window.prompt("PIN (4 cyfry)", current ?? "");
+    if (value === null) return null;
+    const trimmed = value.trim();
+    if (/^\d{4}$/.test(trimmed)) return trimmed;
+    window.alert("PIN musi składać się z 4 cyfr.");
+  }
+}
+
 function PencilIcon() {
   return (
     <svg
@@ -42,15 +66,21 @@ function TrashIcon() {
   );
 }
 
-export default function EmployeesList({ initial }: { initial: string[] }) {
+export default function EmployeesList({ initial }: { initial: Employee[] }) {
   const [employees, setEmployees] = useState(initial);
 
   function handleEdit(index: number) {
-    const next = window.prompt("Zmień imię i nazwisko", employees[index]);
-    if (next === null) return;
-    const trimmed = next.trim();
-    if (!trimmed) return;
-    setEmployees((prev) => prev.map((e, i) => (i === index ? trimmed : e)));
+    const name = window.prompt("Imię i nazwisko", employees[index].name);
+    if (name === null) return;
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
+    const pin = askPin(employees[index].pin);
+    if (pin === null) return;
+
+    setEmployees((prev) =>
+      prev.map((e, i) => (i === index ? { name: trimmedName, pin } : e)),
+    );
   }
 
   function handleDelete(index: number) {
@@ -58,11 +88,15 @@ export default function EmployeesList({ initial }: { initial: string[] }) {
   }
 
   function handleAdd() {
-    const value = window.prompt("Imię i nazwisko pracownika");
-    if (value === null) return;
-    const trimmed = value.trim();
-    if (!trimmed) return;
-    setEmployees((prev) => [...prev, trimmed]);
+    const name = window.prompt("Imię i nazwisko pracownika");
+    if (name === null) return;
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+
+    const pin = askPin();
+    if (pin === null) return;
+
+    setEmployees((prev) => [...prev, { name: trimmedName, pin }]);
   }
 
   return (
@@ -84,9 +118,17 @@ export default function EmployeesList({ initial }: { initial: string[] }) {
             key={index}
             className="flex items-center justify-between gap-2 bg-white px-8 py-4 transition-colors hover:bg-gray-50"
           >
-            <span className="text-base font-medium text-gray-900">
-              {employee}
-            </span>
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-600">
+                {initials(employee.name)}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-base font-medium text-gray-900">
+                  {employee.name}
+                </p>
+                <p className="text-xs text-gray-500">PIN: {employee.pin}</p>
+              </div>
+            </div>
             <div className="flex items-center gap-1">
               <button
                 type="button"

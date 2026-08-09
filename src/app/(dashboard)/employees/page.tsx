@@ -1,6 +1,9 @@
-import EmployeesList from "./EmployeesList";
+import EmployeesList, { type Employee } from "./EmployeesList";
 
-const employees: string[] = ["Anna Nowak", "Piotr Wiśniewski"];
+const employees: Employee[] = [
+  { name: "Anna Nowak", pin: "1234" },
+  { name: "Piotr Wiśniewski", pin: "5678" },
+];
 
 export default function EmployeesPage() {
   return (
