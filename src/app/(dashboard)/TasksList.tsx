@@ -43,10 +43,40 @@ function PencilIcon() {
   );
 }
 
+function GripIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="6" r="1.6" />
+      <circle cx="15" cy="6" r="1.6" />
+      <circle cx="9" cy="12" r="1.6" />
+      <circle cx="15" cy="12" r="1.6" />
+      <circle cx="9" cy="18" r="1.6" />
+      <circle cx="15" cy="18" r="1.6" />
+    </svg>
+  );
+}
+
 export default function TasksList({ initial }: { initial: Task[] }) {
   const [tasks, setTasks] = useState(initial);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [editMode, setEditMode] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  function moveTask(from: number, to: number) {
+    if (from === to) return;
+    setTasks((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  }
 
   function updateTask(index: number, patch: Partial<Task>) {
     setTasks((prev) =>
@@ -121,10 +151,36 @@ export default function TasksList({ initial }: { initial: Task[] }) {
           return (
             <li
               key={index}
-              className={`flex items-center justify-between gap-2 px-8 py-4 transition-colors ${rowClass}`}
+              onDragOver={(e) => {
+                if (editMode && dragIndex !== null) e.preventDefault();
+              }}
+              onDrop={() => {
+                if (editMode && dragIndex !== null) {
+                  moveTask(dragIndex, index);
+                  setDragIndex(null);
+                }
+              }}
+              className={`flex items-center justify-between gap-2 px-8 py-4 transition-colors ${rowClass} ${
+                dragIndex === index ? "opacity-50" : ""
+              }`}
             >
               <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-900">
-                <span className="w-5 shrink-0 text-gray-400">{index + 1}.</span>
+                {editMode ? (
+                  <span
+                    draggable
+                    onDragStart={() => setDragIndex(index)}
+                    onDragEnd={() => setDragIndex(null)}
+                    aria-label="Przeciągnij, aby zmienić kolejność"
+                    title="Przeciągnij, aby zmienić kolejność"
+                    className="flex w-5 shrink-0 cursor-grab justify-center text-gray-400 active:cursor-grabbing"
+                  >
+                    <GripIcon />
+                  </span>
+                ) : (
+                  <span className="w-5 shrink-0 text-gray-400">
+                    {index + 1}.
+                  </span>
+                )}
                 {editMode ? (
                   <input
                     value={task.name}
