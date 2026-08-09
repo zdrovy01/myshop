@@ -206,7 +206,7 @@ export default function TasksList({ initial }: { initial: Task[] }) {
         </Modal>
       )}
 
-      <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
+      <ul className="-mx-8 flex flex-col">
         {tasks.map((task, index) => {
           const rowClass =
             task.priority === 1
