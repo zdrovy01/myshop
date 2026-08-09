@@ -57,8 +57,28 @@ export default function TasksList({ initial }: { initial: string[] }) {
     setTasks((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function handleAdd() {
+    const value = window.prompt("Nazwa zadania");
+    if (value === null) return;
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    setTasks((prev) => [...prev, trimmed]);
+  }
+
   return (
-    <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
+    <>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-gray-900">Lista zadań</h1>
+        <button
+          type="button"
+          onClick={handleAdd}
+          className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+        >
+          Dodaj zadanie
+        </button>
+      </div>
+
+      <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
       {tasks.map((task, index) => (
         <li
           key={index}
@@ -87,6 +107,7 @@ export default function TasksList({ initial }: { initial: string[] }) {
           </div>
         </li>
       ))}
-    </ul>
+      </ul>
+    </>
   );
 }
