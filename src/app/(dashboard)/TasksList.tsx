@@ -67,6 +67,7 @@ export default function TasksList({ initial }: { initial: Task[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
 
   function moveTask(from: number, to: number) {
     if (from === to) return;
@@ -152,16 +153,24 @@ export default function TasksList({ initial }: { initial: Task[] }) {
             <li
               key={index}
               onDragOver={(e) => {
-                if (editMode && dragIndex !== null) e.preventDefault();
+                if (editMode && dragIndex !== null) {
+                  e.preventDefault();
+                  setOverIndex(index);
+                }
               }}
               onDrop={() => {
                 if (editMode && dragIndex !== null) {
                   moveTask(dragIndex, index);
                   setDragIndex(null);
+                  setOverIndex(null);
                 }
               }}
               className={`flex items-center justify-between gap-2 px-8 py-4 transition-colors ${rowClass} ${
-                dragIndex === index ? "opacity-50" : ""
+                dragIndex === index ? "opacity-40" : ""
+              } ${
+                overIndex === index && dragIndex !== index
+                  ? "shadow-[inset_0_2px_0_0_#111827]"
+                  : ""
               }`}
             >
               <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-900">
@@ -169,7 +178,10 @@ export default function TasksList({ initial }: { initial: Task[] }) {
                   <span
                     draggable
                     onDragStart={() => setDragIndex(index)}
-                    onDragEnd={() => setDragIndex(null)}
+                    onDragEnd={() => {
+                      setDragIndex(null);
+                      setOverIndex(null);
+                    }}
                     aria-label="Przeciągnij, aby zmienić kolejność"
                     title="Przeciągnij, aby zmienić kolejność"
                     className="flex w-5 shrink-0 cursor-grab justify-center text-gray-400 active:cursor-grabbing"
