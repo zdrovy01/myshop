@@ -11,9 +11,28 @@ function DotsIcon() {
       fill="currentColor"
       aria-hidden="true"
     >
-      <circle cx="12" cy="5" r="1.6" />
+      <circle cx="5" cy="12" r="1.6" />
       <circle cx="12" cy="12" r="1.6" />
-      <circle cx="12" cy="19" r="1.6" />
+      <circle cx="19" cy="12" r="1.6" />
+    </svg>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
     </svg>
   );
 }
@@ -48,22 +67,35 @@ export default function TasksList({ initial }: { initial: string[] }) {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Lista zadań</h1>
-        <button
-          type="button"
-          onClick={handleAdd}
-          className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-        >
-          Dodaj zadanie
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="Edytuj"
+            title="Edytuj"
+            className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-gray-900 text-white transition-colors hover:bg-gray-800"
+          >
+            <PencilIcon />
+          </button>
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+          >
+            Dodaj zadanie
+          </button>
+        </div>
       </div>
 
       <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {tasks.map((task, index) => (
           <li
             key={index}
-            className="flex items-center justify-between gap-2 bg-blue-50/60 px-8 py-4 transition-colors hover:bg-blue-100/70"
+            className="flex items-center justify-between gap-2 bg-blue-100/60 px-8 py-4 transition-colors hover:bg-blue-100"
           >
-            <span className="text-base font-medium text-gray-900">{task}</span>
+            <span className="flex items-center gap-3 text-base font-medium text-gray-900">
+              <span className="w-5 shrink-0 text-gray-400">{index + 1}.</span>
+              {task}
+            </span>
             <div className="relative">
               <button
                 type="button"
