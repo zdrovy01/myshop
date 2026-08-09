@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Calendar from "@/components/Calendar";
 import Modal from "@/components/Modal";
+import { createTask, deleteTask, saveTasks } from "./tasks.actions";
 
 export type Task = {
+  id: string;
   name: string;
   priority: 1 | 2;
   requiresPhoto: boolean;
@@ -78,9 +80,11 @@ export default function TasksList({ initial }: { initial: Task[] }) {
     );
   }
 
-  function handleDelete(index: number) {
+  async function handleDelete(index: number) {
     setOpenIndex(null);
+    const task = tasks[index];
     setTasks((prev) => prev.filter((_, i) => i !== index));
+    await deleteTask(task.id);
   }
 
   function openAdd() {
@@ -88,27 +92,29 @@ export default function TasksList({ initial }: { initial: Task[] }) {
     setAddOpen(true);
   }
 
-  function submitAdd(e: React.FormEvent) {
+  async function submitAdd(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = newName.trim();
     if (!trimmed) return;
-    setTasks((prev) => [
-      ...prev,
-      { name: trimmed, priority: 2, requiresPhoto: false },
-    ]);
     setAddOpen(false);
+    const created = await createTask(trimmed);
+    if (created) setTasks((prev) => [...prev, created]);
   }
 
-  function toggleEdit() {
+  async function toggleEdit() {
     setOpenIndex(null);
     if (editMode) {
       // Збереження: пріоритет 1 (червоні) — завжди вгорі (стабільно).
-      setTasks((prev) => [
-        ...prev.filter((t) => t.priority === 1),
-        ...prev.filter((t) => t.priority !== 1),
-      ]);
+      const sorted = [
+        ...tasks.filter((t) => t.priority === 1),
+        ...tasks.filter((t) => t.priority !== 1),
+      ];
+      setTasks(sorted);
+      setEditMode(false);
+      await saveTasks(sorted);
+    } else {
+      setEditMode(true);
     }
-    setEditMode((e) => !e);
   }
 
   return (
@@ -209,7 +215,7 @@ export default function TasksList({ initial }: { initial: Task[] }) {
 
           return (
             <li
-              key={index}
+              key={task.id}
               onDragOver={(e) => {
                 if (editMode && dragIndex !== null) {
                   e.preventDefault();

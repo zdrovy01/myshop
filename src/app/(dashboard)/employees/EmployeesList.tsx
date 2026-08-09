@@ -2,8 +2,13 @@
 
 import { useState } from "react";
 import Modal from "@/components/Modal";
+import {
+  createEmployee,
+  deleteEmployee,
+  updateEmployee,
+} from "./actions";
 
-export type Employee = { name: string; pin: string };
+export type Employee = { id: string; name: string; pin: string };
 
 function initials(name: string) {
   return (
@@ -80,30 +85,33 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
     setDialog({ mode: "edit", index });
   }
 
-  function handleDelete(index: number) {
+  async function handleDelete(index: number) {
+    const emp = employees[index];
     setEmployees((prev) => prev.filter((_, i) => i !== index));
+    await deleteEmployee(emp.id);
   }
 
-  function submitDialog(e: React.FormEvent) {
+  async function submitDialog(e: React.FormEvent) {
     e.preventDefault();
     if (!dialog) return;
+    setError(null);
 
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setError("Podaj imię i nazwisko.");
-      return;
-    }
-    if (!/^\d{4}$/.test(pin.trim())) {
-      setError("PIN musi składać się z 4 cyfr.");
-      return;
-    }
-
-    const entry = { name: trimmedName, pin: pin.trim() };
     if (dialog.mode === "add") {
-      setEmployees((prev) => [...prev, entry]);
+      const result = await createEmployee(name, pin);
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      setEmployees((prev) => [...prev, result.employee]);
     } else {
+      const id = employees[dialog.index].id;
+      const result = await updateEmployee(id, name, pin);
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
       setEmployees((prev) =>
-        prev.map((emp, i) => (i === dialog.index ? entry : emp)),
+        prev.map((emp, i) => (i === dialog.index ? result.employee : emp)),
       );
     }
     setDialog(null);
@@ -186,7 +194,7 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
       <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {employees.map((employee, index) => (
           <li
-            key={index}
+            key={employee.id}
             className="flex items-center justify-between gap-2 bg-white px-8 py-4 transition-colors hover:bg-gray-50"
           >
             <div className="flex min-w-0 items-center gap-3">
