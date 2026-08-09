@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Modal from "@/components/Modal";
 
 export type Task = {
   name: string;
@@ -68,6 +69,8 @@ export default function TasksList({ initial }: { initial: Task[] }) {
   const [editMode, setEditMode] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const [newName, setNewName] = useState("");
 
   function moveTask(from: number, to: number) {
     if (from === to) return;
@@ -90,15 +93,20 @@ export default function TasksList({ initial }: { initial: Task[] }) {
     setTasks((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function handleAdd() {
-    const value = window.prompt("Nazwa zadania");
-    if (value === null) return;
-    const trimmed = value.trim();
+  function openAdd() {
+    setNewName("");
+    setAddOpen(true);
+  }
+
+  function submitAdd(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = newName.trim();
     if (!trimmed) return;
     setTasks((prev) => [
       ...prev,
       { name: trimmed, priority: 2, requiresPhoto: false },
     ]);
+    setAddOpen(false);
   }
 
   function toggleEdit() {
@@ -134,13 +142,42 @@ export default function TasksList({ initial }: { initial: Task[] }) {
           </button>
           <button
             type="button"
-            onClick={handleAdd}
+            onClick={openAdd}
             className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
           >
             Dodaj zadanie
           </button>
         </div>
       </div>
+
+      {addOpen && (
+        <Modal title="Nowe zadanie" onClose={() => setAddOpen(false)}>
+          <form onSubmit={submitAdd} className="flex flex-col gap-4">
+            <input
+              autoFocus
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Nazwa zadania"
+              className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setAddOpen(false)}
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Anuluj
+              </button>
+              <button
+                type="submit"
+                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Dodaj
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {tasks.map((task, index) => {

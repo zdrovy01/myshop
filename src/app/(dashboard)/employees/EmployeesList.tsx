@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Modal from "@/components/Modal";
 
 export type Employee = { name: string; pin: string };
 
@@ -14,16 +15,6 @@ function initials(name: string) {
       .join("")
       .toUpperCase() || "?"
   );
-}
-
-function askPin(current?: string): string | null {
-  while (true) {
-    const value = window.prompt("PIN (4 cyfry)", current ?? "");
-    if (value === null) return null;
-    const trimmed = value.trim();
-    if (/^\d{4}$/.test(trimmed)) return trimmed;
-    window.alert("PIN musi składać się z 4 cyfr.");
-  }
 }
 
 function PencilIcon() {
@@ -68,35 +59,54 @@ function TrashIcon() {
 
 export default function EmployeesList({ initial }: { initial: Employee[] }) {
   const [employees, setEmployees] = useState(initial);
+  const [dialog, setDialog] = useState<
+    { mode: "add" } | { mode: "edit"; index: number } | null
+  >(null);
+  const [name, setName] = useState("");
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleEdit(index: number) {
-    const name = window.prompt("Imię i nazwisko", employees[index].name);
-    if (name === null) return;
-    const trimmedName = name.trim();
-    if (!trimmedName) return;
+  function openAdd() {
+    setName("");
+    setPin("");
+    setError(null);
+    setDialog({ mode: "add" });
+  }
 
-    const pin = askPin(employees[index].pin);
-    if (pin === null) return;
-
-    setEmployees((prev) =>
-      prev.map((e, i) => (i === index ? { name: trimmedName, pin } : e)),
-    );
+  function openEdit(index: number) {
+    setName(employees[index].name);
+    setPin(employees[index].pin);
+    setError(null);
+    setDialog({ mode: "edit", index });
   }
 
   function handleDelete(index: number) {
     setEmployees((prev) => prev.filter((_, i) => i !== index));
   }
 
-  function handleAdd() {
-    const name = window.prompt("Imię i nazwisko pracownika");
-    if (name === null) return;
+  function submitDialog(e: React.FormEvent) {
+    e.preventDefault();
+    if (!dialog) return;
+
     const trimmedName = name.trim();
-    if (!trimmedName) return;
+    if (!trimmedName) {
+      setError("Podaj imię i nazwisko.");
+      return;
+    }
+    if (!/^\d{4}$/.test(pin.trim())) {
+      setError("PIN musi składać się z 4 cyfr.");
+      return;
+    }
 
-    const pin = askPin();
-    if (pin === null) return;
-
-    setEmployees((prev) => [...prev, { name: trimmedName, pin }]);
+    const entry = { name: trimmedName, pin: pin.trim() };
+    if (dialog.mode === "add") {
+      setEmployees((prev) => [...prev, entry]);
+    } else {
+      setEmployees((prev) =>
+        prev.map((emp, i) => (i === dialog.index ? entry : emp)),
+      );
+    }
+    setDialog(null);
   }
 
   return (
@@ -105,12 +115,73 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
         <h1 className="text-2xl font-semibold text-gray-900">Pracownicy</h1>
         <button
           type="button"
-          onClick={handleAdd}
+          onClick={openAdd}
           className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
         >
           Dodaj pracownika
         </button>
       </div>
+
+      {dialog && (
+        <Modal
+          title={dialog.mode === "add" ? "Nowy pracownik" : "Edytuj pracownika"}
+          onClose={() => setDialog(null)}
+        >
+          <form onSubmit={submitDialog} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="emp-name"
+                className="text-sm font-medium text-gray-700"
+              >
+                Imię i nazwisko
+              </label>
+              <input
+                id="emp-name"
+                autoFocus
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="emp-pin"
+                className="text-sm font-medium text-gray-700"
+              >
+                PIN (4 cyfry)
+              </label>
+              <input
+                id="emp-pin"
+                inputMode="numeric"
+                maxLength={4}
+                value={pin}
+                onChange={(e) =>
+                  setPin(e.target.value.replace(/\D/g, "").slice(0, 4))
+                }
+                className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm tracking-widest outline-none focus:border-gray-900"
+              />
+            </div>
+
+            {error && <p className="text-sm text-red-600">{error}</p>}
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDialog(null)}
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Anuluj
+              </button>
+              <button
+                type="submit"
+                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+              >
+                Zapisz
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {employees.map((employee, index) => (
@@ -132,7 +203,7 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
             <div className="flex items-center gap-1">
               <button
                 type="button"
-                onClick={() => handleEdit(index)}
+                onClick={() => openEdit(index)}
                 aria-label="Edytuj"
                 title="Edytuj"
                 className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
