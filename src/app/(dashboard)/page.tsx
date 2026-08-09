@@ -1,9 +1,9 @@
-import TasksList from "./TasksList";
+import TasksList, { type Task } from "./TasksList";
 
-const tasks: string[] = [
-  "Zamówienie dostawy",
-  "Inwentaryzacja",
-  "Grafik pracowników",
+const tasks: Task[] = [
+  { name: "Zamówienie dostawy", priority: 2, requiresPhoto: false },
+  { name: "Inwentaryzacja", priority: 2, requiresPhoto: false },
+  { name: "Grafik pracowników", priority: 2, requiresPhoto: false },
 ];
 
 export default function ListaZadanPage() {

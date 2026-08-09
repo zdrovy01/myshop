@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+export type Task = {
+  name: string;
+  priority: 1 | 2;
+  requiresPhoto: boolean;
+};
+
 function DotsIcon() {
   return (
     <svg
@@ -37,17 +43,15 @@ function PencilIcon() {
   );
 }
 
-export default function TasksList({ initial }: { initial: string[] }) {
+export default function TasksList({ initial }: { initial: Task[] }) {
   const [tasks, setTasks] = useState(initial);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [editMode, setEditMode] = useState(false);
 
-  function handleEdit(index: number) {
-    setOpenIndex(null);
-    const next = window.prompt("Zmień nazwę zadania", tasks[index]);
-    if (next === null) return;
-    const trimmed = next.trim();
-    if (!trimmed) return;
-    setTasks((prev) => prev.map((t, i) => (i === index ? trimmed : t)));
+  function updateTask(index: number, patch: Partial<Task>) {
+    setTasks((prev) =>
+      prev.map((t, i) => (i === index ? { ...t, ...patch } : t)),
+    );
   }
 
   function handleDelete(index: number) {
@@ -60,7 +64,22 @@ export default function TasksList({ initial }: { initial: string[] }) {
     if (value === null) return;
     const trimmed = value.trim();
     if (!trimmed) return;
-    setTasks((prev) => [...prev, trimmed]);
+    setTasks((prev) => [
+      ...prev,
+      { name: trimmed, priority: 2, requiresPhoto: false },
+    ]);
+  }
+
+  function toggleEdit() {
+    setOpenIndex(null);
+    if (editMode) {
+      // Збереження: пріоритет 1 (червоні) — завжди вгорі (стабільно).
+      setTasks((prev) => [
+        ...prev.filter((t) => t.priority === 1),
+        ...prev.filter((t) => t.priority !== 1),
+      ]);
+    }
+    setEditMode((e) => !e);
   }
 
   return (
@@ -70,9 +89,15 @@ export default function TasksList({ initial }: { initial: string[] }) {
         <div className="flex items-center gap-2">
           <button
             type="button"
+            onClick={toggleEdit}
             aria-label="Edytuj"
-            title="Edytuj"
-            className="flex h-9 w-9 items-center justify-center rounded-[4px] bg-gray-900 text-white transition-colors hover:bg-gray-800"
+            title={editMode ? "Zapisz" : "Edytuj"}
+            aria-pressed={editMode}
+            className={`flex h-9 w-9 items-center justify-center rounded-[4px] transition-colors ${
+              editMode
+                ? "bg-gray-600 text-white hover:bg-gray-700"
+                : "bg-gray-900 text-white hover:bg-gray-800"
+            }`}
           >
             <PencilIcon />
           </button>
@@ -87,59 +112,113 @@ export default function TasksList({ initial }: { initial: string[] }) {
       </div>
 
       <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
-        {tasks.map((task, index) => (
-          <li
-            key={index}
-            className="flex items-center justify-between gap-2 bg-blue-100/60 px-8 py-4 transition-colors hover:bg-blue-100"
-          >
-            <span className="flex items-center gap-3 text-base font-medium text-gray-900">
-              <span className="w-5 shrink-0 text-gray-400">{index + 1}.</span>
-              {task}
-            </span>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() =>
-                  setOpenIndex((cur) => (cur === index ? null : index))
-                }
-                aria-label="Opcje"
-                title="Opcje"
-                className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900"
-              >
-                <DotsIcon />
-              </button>
+        {tasks.map((task, index) => {
+          const rowClass =
+            task.priority === 1
+              ? "bg-red-100/70 hover:bg-red-100"
+              : "bg-blue-100/60 hover:bg-blue-100";
 
-              {openIndex === index && (
-                <>
-                  {/* клік поза меню закриває його */}
+          return (
+            <li
+              key={index}
+              className={`flex items-center justify-between gap-2 px-8 py-4 transition-colors ${rowClass}`}
+            >
+              <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-900">
+                <span className="w-5 shrink-0 text-gray-400">{index + 1}.</span>
+                {editMode ? (
+                  <input
+                    value={task.name}
+                    onChange={(e) => updateTask(index, { name: e.target.value })}
+                    aria-label="Nazwa zadania"
+                    className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-900 outline-none focus:border-gray-900"
+                  />
+                ) : (
+                  <span className="truncate">{task.name}</span>
+                )}
+              </span>
+
+              <div className="flex shrink-0 items-center gap-3">
+                {editMode && (
+                  <>
+                    <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-600">
+                      <span>Foto</span>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={task.requiresPhoto}
+                        onClick={() =>
+                          updateTask(index, {
+                            requiresPhoto: !task.requiresPhoto,
+                          })
+                        }
+                        className={`relative h-5 w-9 rounded-full transition-colors ${
+                          task.requiresPhoto ? "bg-gray-900" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                            task.requiresPhoto
+                              ? "translate-x-4"
+                              : "translate-x-0.5"
+                          }`}
+                        />
+                      </button>
+                    </label>
+
+                    <select
+                      value={task.priority}
+                      onChange={(e) =>
+                        updateTask(index, {
+                          priority: Number(e.target.value) as 1 | 2,
+                        })
+                      }
+                      aria-label="Priorytet"
+                      className="rounded-[4px] border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 outline-none focus:border-gray-900"
+                    >
+                      <option value={1}>Priorytet 1</option>
+                      <option value={2}>Priorytet 2</option>
+                    </select>
+                  </>
+                )}
+
+                <div className="relative">
                   <button
                     type="button"
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    onClick={() => setOpenIndex(null)}
-                    className="fixed inset-0 z-10 cursor-default"
-                  />
-                  <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg">
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(index)}
-                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Edytuj
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(index)}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
-                    >
-                      Usuń
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </li>
-        ))}
+                    onClick={() =>
+                      setOpenIndex((cur) => (cur === index ? null : index))
+                    }
+                    aria-label="Opcje"
+                    title="Opcje"
+                    className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900"
+                  >
+                    <DotsIcon />
+                  </button>
+
+                  {openIndex === index && (
+                    <>
+                      <button
+                        type="button"
+                        aria-hidden="true"
+                        tabIndex={-1}
+                        onClick={() => setOpenIndex(null)}
+                        className="fixed inset-0 z-10 cursor-default"
+                      />
+                      <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(index)}
+                          className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                        >
+                          Usuń
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </>
   );
