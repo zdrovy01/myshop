@@ -33,7 +33,7 @@ export default function ListaZadanPage() {
           <li key={task}>
             <button
               type="button"
-              className="flex w-full items-center justify-between px-8 py-6 text-left transition-colors hover:bg-gray-50"
+              className="flex w-full items-center justify-between px-8 py-4 text-left transition-colors hover:bg-gray-50"
             >
               <span className="text-base font-medium text-gray-900">{task}</span>
               <ChevronRight />
