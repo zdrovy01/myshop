@@ -28,14 +28,14 @@ export default function ListaZadanPage() {
     <div className="py-8">
       <h1 className="mb-6 text-2xl font-semibold text-gray-900">Lista zadań</h1>
 
-      <ul className="flex flex-col divide-y divide-gray-200 border-y border-gray-200">
+      <ul className="-mx-8 flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {tasks.map((task) => (
           <li key={task}>
             <button
               type="button"
-              className="flex w-full items-center justify-between py-4 text-left transition-colors hover:bg-gray-50"
+              className="flex w-full items-center justify-between px-8 py-6 text-left transition-colors hover:bg-gray-50"
             >
-              <span className="text-sm font-medium text-gray-900">{task}</span>
+              <span className="text-base font-medium text-gray-900">{task}</span>
               <ChevronRight />
             </button>
           </li>
