@@ -1,7 +1,7 @@
-const tasks: { title: string; description: string }[] = [
-  { title: "Zamówienie dostawy", description: "Uzupełnij zapasy na jutro" },
-  { title: "Inwentaryzacja", description: "Sprawdź stan magazynu" },
-  { title: "Grafik pracowników", description: "Ustaw zmiany na przyszły tydzień" },
+const tasks: string[] = [
+  "Zamówienie dostawy",
+  "Inwentaryzacja",
+  "Grafik pracowników",
 ];
 
 function ChevronRight() {
@@ -28,21 +28,14 @@ export default function ListaZadanPage() {
     <div className="py-8">
       <h1 className="mb-6 text-2xl font-semibold text-gray-900">Lista zadań</h1>
 
-      <ul className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200">
+      <ul className="flex flex-col divide-y divide-gray-200 border-y border-gray-200">
         {tasks.map((task) => (
-          <li key={task.title}>
+          <li key={task}>
             <button
               type="button"
-              className="flex w-full items-center justify-between px-4 py-4 text-left transition-colors hover:bg-gray-50"
+              className="flex w-full items-center justify-between py-4 text-left transition-colors hover:bg-gray-50"
             >
-              <span className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900">
-                  {task.title}
-                </span>
-                <span className="text-xs text-gray-500">
-                  {task.description}
-                </span>
-              </span>
+              <span className="text-sm font-medium text-gray-900">{task}</span>
               <ChevronRight />
             </button>
           </li>
