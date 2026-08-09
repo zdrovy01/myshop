@@ -146,8 +146,8 @@ export default function TasksList({ initial }: { initial: Task[] }) {
         {tasks.map((task, index) => {
           const rowClass =
             task.priority === 1
-              ? "bg-red-100/70 hover:bg-red-100"
-              : "bg-blue-100/60 hover:bg-blue-100";
+              ? "bg-red-200/80 hover:bg-red-200"
+              : "bg-blue-200/70 hover:bg-blue-200";
 
           return (
             <li
@@ -190,7 +190,7 @@ export default function TasksList({ initial }: { initial: Task[] }) {
                   </span>
                 ) : (
                   <span className="w-5 shrink-0 text-gray-400">
-                    {index + 1}.
+                    {index + 1}
                   </span>
                 )}
                 {editMode ? (

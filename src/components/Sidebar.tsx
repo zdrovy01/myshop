@@ -25,7 +25,7 @@ function ListaZadanIcon() {
   );
 }
 
-function AnalitykaIcon() {
+function StatystykaIcon() {
   return (
     <svg
       width="21"
@@ -141,7 +141,7 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 
 const navItems: { label: string; href: string; icon: React.ReactNode }[] = [
   { label: "Lista zadań", href: "/", icon: <ListaZadanIcon /> },
-  { label: "Analityka", href: "/analytics", icon: <AnalitykaIcon /> },
+  { label: "Statystyka", href: "/statistics", icon: <StatystykaIcon /> },
   { label: "Pracownicy", href: "/employees", icon: <PracownikiIcon /> },
   { label: "Ustawienia", href: "/settings", icon: <UstawieniaIcon /> },
   { label: "Subskrypcja", href: "/subscription", icon: <SubskrypcjaIcon /> },
