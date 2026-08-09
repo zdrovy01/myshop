@@ -82,7 +82,7 @@ export default function EmployeesList({ initial }: { initial: string[] }) {
         {employees.map((employee, index) => (
           <li
             key={index}
-            className="flex items-center justify-between gap-2 bg-blue-50/60 px-8 py-4 transition-colors hover:bg-blue-100/70"
+            className="flex items-center justify-between gap-2 bg-white px-8 py-4 transition-colors hover:bg-gray-50"
           >
             <span className="text-base font-medium text-gray-900">
               {employee}
@@ -93,7 +93,7 @@ export default function EmployeesList({ initial }: { initial: string[] }) {
                 onClick={() => handleEdit(index)}
                 aria-label="Edytuj"
                 title="Edytuj"
-                className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900"
+                className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
               >
                 <PencilIcon />
               </button>
@@ -102,7 +102,7 @@ export default function EmployeesList({ initial }: { initial: string[] }) {
                 onClick={() => handleDelete(index)}
                 aria-label="Usuń"
                 title="Usuń"
-                className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-white hover:text-red-600"
+                className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-red-600"
               >
                 <TrashIcon />
               </button>
