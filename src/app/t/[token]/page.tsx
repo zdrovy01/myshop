@@ -1,25 +1,9 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-function CameraIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-gray-500"
-      aria-hidden="true"
-    >
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-      <circle cx="12" cy="13" r="4" />
-    </svg>
-  );
-}
+import PublicTasksList, {
+  type PublicEmployee,
+  type PublicTask,
+} from "./PublicTasksList";
 
 export default async function PublicTasksPage({
   params,
@@ -37,13 +21,26 @@ export default async function PublicTasksPage({
 
   if (!user) notFound();
 
-  const { data } = await supabase
-    .from("tasks")
-    .select("id, name, priority, requires_photo")
-    .eq("user_id", user.id)
-    .order("position", { ascending: true });
+  const [{ data: taskRows }, { data: employeeRows }] = await Promise.all([
+    supabase
+      .from("tasks")
+      .select("id, name, priority, requires_photo")
+      .eq("user_id", user.id)
+      .order("position", { ascending: true }),
+    supabase
+      .from("employees")
+      .select("id, name")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true }),
+  ]);
 
-  const tasks = data ?? [];
+  const tasks: PublicTask[] = (taskRows ?? []).map((t) => ({
+    id: t.id,
+    name: t.name,
+    priority: t.priority === 1 ? 1 : 2,
+    requiresPhoto: t.requires_photo,
+  }));
+  const employees: PublicEmployee[] = employeeRows ?? [];
 
   return (
     <div className="min-h-screen bg-[#f4f4f6] sm:px-4 sm:py-10">
@@ -55,21 +52,7 @@ export default async function PublicTasksPage({
         {tasks.length === 0 ? (
           <p className="text-sm text-gray-500">Brak zadań.</p>
         ) : (
-          <ul className="-mx-5 flex flex-col sm:-mx-8">
-            {tasks.map((task) => (
-              <li
-                key={task.id}
-                className={`flex items-center justify-between gap-3 px-5 py-4 sm:px-8 ${
-                  task.priority === 1 ? "bg-red-200/80" : "bg-blue-200/70"
-                }`}
-              >
-                <span className="min-w-0 truncate text-base font-medium text-gray-900">
-                  {task.name}
-                </span>
-                {task.requires_photo && <CameraIcon />}
-              </li>
-            ))}
-          </ul>
+          <PublicTasksList tasks={tasks} employees={employees} />
         )}
       </div>
     </div>
