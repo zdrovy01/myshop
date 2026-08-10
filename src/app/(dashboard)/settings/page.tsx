@@ -7,6 +7,11 @@ const options: { label: string; description: string; href: string }[] = [
     href: "/settings/account",
   },
   {
+    label: "QR kod listy zadań",
+    description: "Kod i link do listy zadań",
+    href: "/settings/qr",
+  },
+  {
     label: "Język",
     description: "Język aplikacji",
     href: "/settings/language",
