@@ -201,7 +201,7 @@ export default function TasksList({
               autoFocus
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              rows={4}
+              rows={6}
               placeholder={
                 "Nazwa zadania\n\nAby dodać kilka, oddziel “-”, np.:\n-Kawomat\n-Rozmrozić parówki"
               }
