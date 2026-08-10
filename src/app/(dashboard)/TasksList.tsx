@@ -237,7 +237,16 @@ export default function TasksList({
       )}
 
       <ul className="-mx-8 flex flex-col">
-        {tasks.map((task, index) => {
+        {(editMode
+          ? tasks.map((task, index) => ({ task, index }))
+          : tasks
+              .map((task, index) => ({ task, index }))
+              .sort(
+                (a, b) =>
+                  Number(completed.has(a.task.id)) -
+                  Number(completed.has(b.task.id)),
+              )
+        ).map(({ task, index }, displayIndex) => {
           const rowClass = completed.has(task.id)
             ? "bg-emerald-100 hover:bg-emerald-200/70"
             : task.priority === 1
@@ -286,7 +295,7 @@ export default function TasksList({
                   </span>
                 ) : (
                   <span className="w-4 shrink-0 text-xs text-gray-400">
-                    {index + 1}
+                    {displayIndex + 1}
                   </span>
                 )}
                 {editMode ? (
