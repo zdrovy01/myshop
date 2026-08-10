@@ -178,7 +178,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
 
   return (
     <aside
-      className={`flex shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out ${
+      className={`sticky top-0 flex h-screen shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out ${
         open ? "w-72" : "w-[72px]"
       }`}
     >
