@@ -56,18 +56,15 @@ export default async function PublicTasksPage({
           <p className="text-sm text-gray-500">Brak zadań.</p>
         ) : (
           <ul className="-mx-8 flex flex-col">
-            {tasks.map((task, index) => (
+            {tasks.map((task) => (
               <li
                 key={task.id}
                 className={`flex items-center justify-between gap-2 px-8 py-4 ${
                   task.priority === 1 ? "bg-red-200/80" : "bg-blue-200/70"
                 }`}
               >
-                <span className="flex min-w-0 items-center gap-3 text-base font-medium text-gray-900">
-                  <span className="w-5 shrink-0 text-gray-400">
-                    {index + 1}
-                  </span>
-                  <span className="truncate">{task.name}</span>
+                <span className="min-w-0 truncate text-base font-medium text-gray-900">
+                  {task.name}
                 </span>
                 {task.requires_photo && <CameraIcon />}
               </li>
