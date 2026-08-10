@@ -150,12 +150,13 @@ export default function PublicTasksList({
             return (
               <li
                 key={task.id}
-                className={`px-5 py-4 sm:px-8 ${
+                onClick={done ? undefined : () => openComplete(task)}
+                className={`px-5 py-4 transition-[filter] sm:px-8 ${
                   done
                     ? "bg-gray-100"
                     : task.priority === 1
-                      ? "bg-rose-100"
-                      : "bg-sky-100"
+                      ? "cursor-pointer bg-rose-100 hover:brightness-95"
+                      : "cursor-pointer bg-sky-100 hover:brightness-95"
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -176,18 +177,10 @@ export default function PublicTasksList({
                       </span>
                     )}
                   </span>
-                  {done ? (
+                  {done && (
                     <span className="shrink-0 text-sm font-medium text-gray-400">
                       Wykonane
                     </span>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => openComplete(task)}
-                      className="shrink-0 rounded-[4px] bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-                    >
-                      Wykonaj
-                    </button>
                   )}
                 </div>
 
