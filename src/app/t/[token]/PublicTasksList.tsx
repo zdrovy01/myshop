@@ -138,7 +138,7 @@ export default function PublicTasksList({
 
   return (
     <>
-      <ul className="-mx-5 flex flex-col sm:-mx-8">
+      <ul className="-mx-5 flex flex-col divide-y divide-gray-200 sm:-mx-8">
         {[...tasks]
           .sort(
             (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
