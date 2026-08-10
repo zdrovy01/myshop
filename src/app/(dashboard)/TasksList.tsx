@@ -284,7 +284,11 @@ export default function TasksList({
                   >
                     <GripIcon />
                   </span>
-                ) : null}
+                ) : (
+                  <span className="w-4 shrink-0 text-xs text-gray-400">
+                    {index + 1}
+                  </span>
+                )}
                 {editMode ? (
                   <input
                     value={task.name}
