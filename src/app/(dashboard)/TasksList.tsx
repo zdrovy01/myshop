@@ -47,7 +47,14 @@ function GripIcon() {
   );
 }
 
-export default function TasksList({ initial }: { initial: Task[] }) {
+export default function TasksList({
+  initial,
+  completedIds = [],
+}: {
+  initial: Task[];
+  completedIds?: string[];
+}) {
+  const completed = new Set(completedIds);
   const [tasks, setTasks] = useState(initial);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -208,8 +215,9 @@ export default function TasksList({ initial }: { initial: Task[] }) {
 
       <ul className="-mx-8 flex flex-col">
         {tasks.map((task, index) => {
-          const rowClass =
-            task.priority === 1
+          const rowClass = completed.has(task.id)
+            ? "bg-green-200/80 hover:bg-green-200"
+            : task.priority === 1
               ? "bg-red-200/80 hover:bg-red-200"
               : "bg-blue-200/70 hover:bg-blue-200";
 

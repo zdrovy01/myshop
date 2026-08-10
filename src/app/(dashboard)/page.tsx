@@ -18,9 +18,20 @@ export default async function ListaZadanPage() {
     requiresPhoto: t.requires_photo,
   }));
 
+  const taskIds = tasks.map((t) => t.id);
+  const { data: completionRows } = taskIds.length
+    ? await supabase
+        .from("task_completions")
+        .select("task_id")
+        .in("task_id", taskIds)
+    : { data: [] };
+  const completedIds = [
+    ...new Set((completionRows ?? []).map((r) => r.task_id as string)),
+  ];
+
   return (
     <div className="py-8">
-      <TasksList initial={tasks} />
+      <TasksList initial={tasks} completedIds={completedIds} />
     </div>
   );
 }

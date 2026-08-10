@@ -120,34 +120,46 @@ export default function PublicTasksList({
   return (
     <>
       <ul className="-mx-5 flex flex-col sm:-mx-8">
-        {tasks.map((task) => {
-          const done = doneIds.has(task.id);
-          return (
-            <li
-              key={task.id}
-              className={`flex items-center justify-between gap-3 px-5 py-4 sm:px-8 ${
-                task.priority === 1 ? "bg-red-200/80" : "bg-blue-200/70"
-              }`}
-            >
-              <span className="min-w-0 truncate text-base font-medium text-gray-900">
-                {task.name}
-              </span>
-              {done ? (
-                <span className="shrink-0 text-sm font-medium text-green-700">
-                  Wykonane ✓
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => openComplete(task)}
-                  className="shrink-0 rounded-[4px] bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+        {[...tasks]
+          .sort(
+            (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
+          )
+          .map((task) => {
+            const done = doneIds.has(task.id);
+            return (
+              <li
+                key={task.id}
+                className={`flex items-center justify-between gap-3 px-5 py-4 sm:px-8 ${
+                  done
+                    ? "bg-gray-100"
+                    : task.priority === 1
+                      ? "bg-red-200/80"
+                      : "bg-blue-200/70"
+                }`}
+              >
+                <span
+                  className={`min-w-0 truncate text-base font-medium ${
+                    done ? "text-gray-400" : "text-gray-900"
+                  }`}
                 >
-                  Wykonaj
-                </button>
-              )}
-            </li>
-          );
-        })}
+                  {task.name}
+                </span>
+                {done ? (
+                  <span className="shrink-0 text-sm font-medium text-gray-400">
+                    Wykonane
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => openComplete(task)}
+                    className="shrink-0 rounded-[4px] bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                  >
+                    Wykonaj
+                  </button>
+                )}
+              </li>
+            );
+          })}
       </ul>
 
       {active && !pinStep && (
