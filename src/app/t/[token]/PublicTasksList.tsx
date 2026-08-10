@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Modal from "@/components/Modal";
+import PhotoThumb from "@/components/PhotoThumb";
 import { completeTask } from "./actions";
 
 export type PublicTask = {
@@ -193,12 +194,7 @@ export default function PublicTasksList({
                       <p className="text-sm text-gray-500">{info.note}</p>
                     )}
                     {info?.photoUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={info.photoUrl}
-                        alt="Zdjęcie wykonania"
-                        className="h-32 w-32 rounded-[4px] border border-gray-200 object-cover"
-                      />
+                      <PhotoThumb src={info.photoUrl} alt="Zdjęcie wykonania" />
                     )}
                   </div>
                 )}

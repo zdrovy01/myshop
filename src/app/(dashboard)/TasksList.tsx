@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Calendar from "@/components/Calendar";
 import Modal from "@/components/Modal";
+import PhotoThumb from "@/components/PhotoThumb";
 import { createTask, deleteTask, saveTasks } from "./tasks.actions";
 
 export type Task = {
@@ -395,11 +396,9 @@ export default function TasksList({
                       </p>
                     )}
                     {completions[task.id]?.photoUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <PhotoThumb
                         src={completions[task.id].photoUrl!}
                         alt="Zdjęcie wykonania"
-                        className="h-32 w-32 rounded-[4px] border border-gray-200 object-cover"
                       />
                     )}
                   </div>
