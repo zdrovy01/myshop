@@ -39,15 +39,26 @@ function fileToDataUrl(file: File): Promise<string> {
   });
 }
 
+type Completion = {
+  employeeName: string | null;
+  note: string | null;
+  photoUrl: string | null;
+};
+
 export default function PublicTasksList({
   tasks,
   employees,
   completedIds = [],
+  completions = {},
 }: {
   tasks: PublicTask[];
   employees: PublicEmployee[];
   completedIds?: string[];
+  completions?: Record<string, Completion>;
 }) {
+  const [details, setDetails] = useState<Record<string, Completion>>(
+    () => ({ ...completions }),
+  );
   const [active, setActive] = useState<PublicTask | null>(null);
   const [pinStep, setPinStep] = useState(false);
   const [employeeId, setEmployeeId] = useState("");
@@ -107,6 +118,14 @@ export default function PublicTasksList({
       setError(result.error);
       return;
     }
+    setDetails((prev) => ({
+      ...prev,
+      [active.id]: {
+        employeeName: employees.find((e) => e.id === employeeId)?.name ?? null,
+        note: note.trim() || null,
+        photoUrl: photo,
+      },
+    }));
     setDoneIds((prev) => new Set(prev).add(active.id));
     closeAll();
   }
@@ -126,10 +145,11 @@ export default function PublicTasksList({
           )
           .map((task) => {
             const done = doneIds.has(task.id);
+            const info = details[task.id];
             return (
               <li
                 key={task.id}
-                className={`flex items-center justify-between gap-3 px-5 py-4 sm:px-8 ${
+                className={`px-5 py-4 sm:px-8 ${
                   done
                     ? "bg-gray-100"
                     : task.priority === 1
@@ -137,25 +157,50 @@ export default function PublicTasksList({
                       : "bg-blue-200/70"
                 }`}
               >
-                <span
-                  className={`min-w-0 truncate text-base font-medium ${
-                    done ? "text-gray-400" : "text-gray-900"
-                  }`}
-                >
-                  {task.name}
-                </span>
-                {done ? (
-                  <span className="shrink-0 text-sm font-medium text-gray-400">
-                    Wykonane
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span
+                      className={`truncate text-base font-medium ${
+                        done ? "text-gray-400" : "text-gray-900"
+                      }`}
+                    >
+                      {task.name}
+                    </span>
+                    {done && info?.employeeName && (
+                      <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
+                        {info.employeeName}
+                      </span>
+                    )}
                   </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => openComplete(task)}
-                    className="shrink-0 rounded-[4px] bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-                  >
-                    Wykonaj
-                  </button>
+                  {done ? (
+                    <span className="shrink-0 text-sm font-medium text-gray-400">
+                      Wykonane
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openComplete(task)}
+                      className="shrink-0 rounded-[4px] bg-gray-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                    >
+                      Wykonaj
+                    </button>
+                  )}
+                </div>
+
+                {done && (info?.note || info?.photoUrl) && (
+                  <div className="mt-2 flex flex-col gap-2 pl-0">
+                    {info?.note && (
+                      <p className="text-sm text-gray-500">{info.note}</p>
+                    )}
+                    {info?.photoUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={info.photoUrl}
+                        alt="Zdjęcie wykonania"
+                        className="h-32 w-32 rounded-[4px] border border-gray-200 object-cover"
+                      />
+                    )}
+                  </div>
                 )}
               </li>
             );

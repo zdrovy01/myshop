@@ -42,17 +42,38 @@ export default async function PublicTasksPage({
   }));
   const employees: PublicEmployee[] = employeeRows ?? [];
 
-  // Задачі, які вже виконано (виконуються один раз).
+  // Задачі, які вже виконано (виконуються один раз) + деталі виконання.
   const taskIds = tasks.map((t) => t.id);
   const { data: completionRows } = taskIds.length
     ? await supabase
         .from("task_completions")
-        .select("task_id")
+        .select("task_id, note, photo_url, completed_at, employee:employees(name)")
         .in("task_id", taskIds)
+        .order("completed_at", { ascending: false })
     : { data: [] };
+
   const completedIds = [
     ...new Set((completionRows ?? []).map((r) => r.task_id as string)),
   ];
+
+  const completions: Record<
+    string,
+    { employeeName: string | null; note: string | null; photoUrl: string | null }
+  > = {};
+  for (const r of (completionRows ?? []) as Array<{
+    task_id: string;
+    note: string | null;
+    photo_url: string | null;
+    employee: { name: string | null } | { name: string | null }[] | null;
+  }>) {
+    if (completions[r.task_id]) continue; // беремо найновіше
+    const emp = Array.isArray(r.employee) ? r.employee[0] : r.employee;
+    completions[r.task_id] = {
+      employeeName: emp?.name ?? null,
+      note: r.note,
+      photoUrl: r.photo_url,
+    };
+  }
 
   return (
     <div className="min-h-screen bg-[#f4f4f6] sm:px-4 sm:py-10">
@@ -68,6 +89,7 @@ export default async function PublicTasksPage({
             tasks={tasks}
             employees={employees}
             completedIds={completedIds}
+            completions={completions}
           />
         )}
       </div>
