@@ -174,6 +174,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
       .filter(Boolean)
       .join("")
       .toUpperCase() || "?";
+  const isZabka = user?.shopName === "Żabka";
 
   return (
     <aside
@@ -228,8 +229,18 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
         </ul>
       </nav>
       <div className="mt-auto flex items-center gap-3 border-t border-gray-200 p-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-semibold text-gray-600">
-          {initials}
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-sm font-semibold text-gray-600">
+          {isZabka ? (
+            <Image
+              src="/zabkalogo.png"
+              alt="Żabka"
+              width={956}
+              height={1534}
+              className="h-7 w-7 object-contain"
+            />
+          ) : (
+            initials
+          )}
         </div>
         {open && (
           <>
