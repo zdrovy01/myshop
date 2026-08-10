@@ -63,6 +63,7 @@ export default function TasksList({
   const [addOpen, setAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [importText, setImportText] = useState("");
+  const [importMode, setImportMode] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -98,6 +99,7 @@ export default function TasksList({
   function openAdd() {
     setNewName("");
     setImportText("");
+    setImportMode(false);
     setAddOpen(true);
   }
 
@@ -204,36 +206,25 @@ export default function TasksList({
       {addOpen && (
         <Modal title="Nowe zadanie" onClose={() => setAddOpen(false)}>
           <form onSubmit={submitAdd} className="flex flex-col gap-4">
-            <input
-              autoFocus
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="Nazwa zadania"
-              className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-            />
-
-            <div className="flex items-center gap-3">
-              <span className="h-px flex-1 bg-gray-200" />
-              <span className="text-xs font-medium text-gray-400">ALBO</span>
-              <span className="h-px flex-1 bg-gray-200" />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="import-tasks"
-                className="text-sm font-medium text-gray-700"
-              >
-                Importuj listę zadań
-              </label>
+            {importMode ? (
               <textarea
                 id="import-tasks"
+                autoFocus
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
-                rows={4}
+                rows={5}
                 placeholder={"Nowe zadanie po każdym “-”, np.:\n-Kawomat\n-Rozmrozić parówki"}
                 className="resize-none rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
               />
-            </div>
+            ) : (
+              <input
+                autoFocus
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Nazwa zadania"
+                className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              />
+            )}
 
             <div className="flex justify-end gap-2">
               <button
@@ -242,6 +233,13 @@ export default function TasksList({
                 className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
               >
                 Anuluj
+              </button>
+              <button
+                type="button"
+                onClick={() => setImportMode((v) => !v)}
+                className="rounded-[4px] border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                {importMode ? "Pojedyncze zadanie" : "Importuj listę zadań"}
               </button>
               <button
                 type="submit"
