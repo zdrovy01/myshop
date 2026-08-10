@@ -62,6 +62,7 @@ export default function TasksList({
   const [overIndex, setOverIndex] = useState<number | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
+  const [importText, setImportText] = useState("");
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -96,16 +97,25 @@ export default function TasksList({
 
   function openAdd() {
     setNewName("");
+    setImportText("");
     setAddOpen(true);
   }
 
   async function submitAdd(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = newName.trim();
-    if (!trimmed) return;
+    const names: string[] = [];
+    if (newName.trim()) names.push(newName.trim());
+    for (const line of importText.split("\n")) {
+      const t = line.trim();
+      if (t) names.push(t);
+    }
+    if (names.length === 0) return;
     setAddOpen(false);
-    const created = await createTask(trimmed);
-    if (created) setTasks((prev) => [...prev, created]);
+
+    for (const name of names) {
+      const created = await createTask(name);
+      if (created) setTasks((prev) => [...prev, created]);
+    }
   }
 
   async function toggleEdit() {
@@ -194,6 +204,30 @@ export default function TasksList({
               placeholder="Nazwa zadania"
               className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
             />
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-gray-200" />
+              <span className="text-xs font-medium text-gray-400">ALBO</span>
+              <span className="h-px flex-1 bg-gray-200" />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="import-tasks"
+                className="text-sm font-medium text-gray-700"
+              >
+                Importuj listę zadań
+              </label>
+              <textarea
+                id="import-tasks"
+                value={importText}
+                onChange={(e) => setImportText(e.target.value)}
+                rows={4}
+                placeholder={"Jedno zadanie w linii\nnp.:\nKawomat\nRozmrozić parówki"}
+                className="resize-none rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              />
+            </div>
+
             <div className="flex justify-end gap-2">
               <button
                 type="button"
