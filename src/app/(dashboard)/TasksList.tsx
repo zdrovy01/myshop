@@ -105,10 +105,17 @@ export default function TasksList({
     e.preventDefault();
     const names: string[] = [];
     if (newName.trim()) names.push(newName.trim());
-    for (const line of importText.split("\n")) {
-      const t = line.trim();
+
+    // Формат імпорту: нова задача після кожного "-".
+    // Якщо дефісів немає — ділимо просто по рядках.
+    const parts = importText.includes("-")
+      ? importText.split("-")
+      : importText.split("\n");
+    for (const part of parts) {
+      const t = part.trim();
       if (t) names.push(t);
     }
+
     if (names.length === 0) return;
     setAddOpen(false);
 
@@ -223,7 +230,7 @@ export default function TasksList({
                 value={importText}
                 onChange={(e) => setImportText(e.target.value)}
                 rows={4}
-                placeholder={"Jedno zadanie w linii\nnp.:\nKawomat\nRozmrozić parówki"}
+                placeholder={"Nowe zadanie po każdym “-”, np.:\n-Kawomat\n-Rozmrozić parówki"}
                 className="resize-none rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
               />
             </div>
