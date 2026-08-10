@@ -144,7 +144,7 @@ export default function PublicTasksList({
           .sort(
             (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
           )
-          .map((task) => {
+          .map((task, index) => {
             const done = doneIds.has(task.id);
             const info = details[task.id];
             return (
@@ -154,12 +154,15 @@ export default function PublicTasksList({
                   done
                     ? "bg-gray-100"
                     : task.priority === 1
-                      ? "bg-red-200/80"
-                      : "bg-blue-200/70"
+                      ? "bg-rose-100"
+                      : "bg-sky-100"
                 }`}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="flex min-w-0 items-center gap-2">
+                  <span className="flex min-w-0 items-center gap-3">
+                    <span className="w-4 shrink-0 text-xs text-gray-400">
+                      {index + 1}
+                    </span>
                     <span
                       className={`truncate text-base font-medium ${
                         done ? "text-gray-400" : "text-gray-900"

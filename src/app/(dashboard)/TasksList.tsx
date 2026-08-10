@@ -239,10 +239,10 @@ export default function TasksList({
       <ul className="-mx-8 flex flex-col">
         {tasks.map((task, index) => {
           const rowClass = completed.has(task.id)
-            ? "bg-green-200/80 hover:bg-green-200"
+            ? "bg-emerald-100 hover:bg-emerald-200/70"
             : task.priority === 1
-              ? "bg-red-200/80 hover:bg-red-200"
-              : "bg-blue-200/70 hover:bg-blue-200";
+              ? "bg-rose-100 hover:bg-rose-200/70"
+              : "bg-sky-100 hover:bg-sky-200/70";
 
           return (
             <li
