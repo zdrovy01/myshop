@@ -47,12 +47,20 @@ function GripIcon() {
   );
 }
 
+type Completion = {
+  employeeName: string | null;
+  note: string | null;
+  photoUrl: string | null;
+};
+
 export default function TasksList({
   initial,
   completedIds = [],
+  completions = {},
 }: {
   initial: Task[];
   completedIds?: string[];
+  completions?: Record<string, Completion>;
 }) {
   const completed = new Set(completedIds);
   const [tasks, setTasks] = useState(initial);
@@ -251,7 +259,7 @@ export default function TasksList({
                   setOverIndex(null);
                 }
               }}
-              className={`flex items-center justify-between gap-2 px-8 py-4 transition-colors ${rowClass} ${
+              className={`px-8 py-4 transition-colors ${rowClass} ${
                 dragIndex === index ? "opacity-40" : ""
               } ${
                 overIndex === index && dragIndex !== index
@@ -259,6 +267,7 @@ export default function TasksList({
                   : ""
               }`}
             >
+              <div className="flex items-center justify-between gap-2">
               <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-900">
                 {editMode ? (
                   <span
@@ -285,6 +294,13 @@ export default function TasksList({
                 ) : (
                   <span className="truncate">{task.name}</span>
                 )}
+                {!editMode &&
+                  completed.has(task.id) &&
+                  completions[task.id]?.employeeName && (
+                    <span className="shrink-0 rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300">
+                      {completions[task.id].employeeName}
+                    </span>
+                  )}
               </span>
 
               <div className="flex shrink-0 items-center gap-3">
@@ -366,6 +382,28 @@ export default function TasksList({
                   )}
                 </div>
               </div>
+              </div>
+
+              {!editMode &&
+                completed.has(task.id) &&
+                (completions[task.id]?.note ||
+                  completions[task.id]?.photoUrl) && (
+                  <div className="mt-2 flex flex-col gap-2">
+                    {completions[task.id]?.note && (
+                      <p className="text-sm text-gray-600">
+                        {completions[task.id].note}
+                      </p>
+                    )}
+                    {completions[task.id]?.photoUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={completions[task.id].photoUrl!}
+                        alt="Zdjęcie wykonania"
+                        className="h-32 w-32 rounded-[4px] border border-gray-200 object-cover"
+                      />
+                    )}
+                  </div>
+                )}
             </li>
           );
         })}
