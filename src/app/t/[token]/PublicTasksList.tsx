@@ -42,9 +42,11 @@ function fileToDataUrl(file: File): Promise<string> {
 export default function PublicTasksList({
   tasks,
   employees,
+  completedIds = [],
 }: {
   tasks: PublicTask[];
   employees: PublicEmployee[];
+  completedIds?: string[];
 }) {
   const [active, setActive] = useState<PublicTask | null>(null);
   const [pinStep, setPinStep] = useState(false);
@@ -54,7 +56,9 @@ export default function PublicTasksList({
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [doneIds, setDoneIds] = useState<Set<string>>(new Set());
+  const [doneIds, setDoneIds] = useState<Set<string>>(
+    () => new Set(completedIds),
+  );
 
   function openComplete(task: PublicTask) {
     setActive(task);

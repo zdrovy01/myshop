@@ -42,6 +42,18 @@ export default async function PublicTasksPage({
   }));
   const employees: PublicEmployee[] = employeeRows ?? [];
 
+  // Задачі, які вже виконано (виконуються один раз).
+  const taskIds = tasks.map((t) => t.id);
+  const { data: completionRows } = taskIds.length
+    ? await supabase
+        .from("task_completions")
+        .select("task_id")
+        .in("task_id", taskIds)
+    : { data: [] };
+  const completedIds = [
+    ...new Set((completionRows ?? []).map((r) => r.task_id as string)),
+  ];
+
   return (
     <div className="min-h-screen bg-[#f4f4f6] sm:px-4 sm:py-10">
       <div className="mx-auto w-full max-w-2xl overflow-hidden bg-white px-5 py-6 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200">
@@ -52,7 +64,11 @@ export default async function PublicTasksPage({
         {tasks.length === 0 ? (
           <p className="text-sm text-gray-500">Brak zadań.</p>
         ) : (
-          <PublicTasksList tasks={tasks} employees={employees} />
+          <PublicTasksList
+            tasks={tasks}
+            employees={employees}
+            completedIds={completedIds}
+          />
         )}
       </div>
     </div>
