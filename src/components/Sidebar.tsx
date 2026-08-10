@@ -229,14 +229,18 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
         </ul>
       </nav>
       <div className="mt-auto flex items-center gap-3 border-t border-gray-200 p-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gray-200 text-sm font-semibold text-gray-600">
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-600 ${
+            isZabka ? "bg-white ring-1 ring-gray-200" : "bg-gray-200"
+          }`}
+        >
           {isZabka ? (
             <Image
               src="/zabkalogo.png"
               alt="Żabka"
-              width={956}
-              height={1534}
-              className="h-7 w-7 object-contain"
+              width={1280}
+              height={516}
+              className="h-auto w-8 object-contain"
             />
           ) : (
             initials
