@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import BackHeader from "@/components/BackHeader";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
+import DownloadPdfButton from "./DownloadPdfButton";
 
 export default async function QrCodePage() {
   const userId = await getSessionUserId();
@@ -31,6 +32,10 @@ export default async function QrCodePage() {
     width: 240,
     margin: 1,
   });
+  const qrPrintDataUrl = await QRCode.toDataURL(url, {
+    width: 1000,
+    margin: 2,
+  });
 
   return (
     <div className="py-8">
@@ -53,14 +58,17 @@ export default async function QrCodePage() {
 
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium text-gray-700">Kod QR</span>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={qrDataUrl}
-            alt="Kod QR listy zadań"
-            width={240}
-            height={240}
-            className="rounded-lg border border-gray-200"
-          />
+          <div className="flex items-start gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrDataUrl}
+              alt="Kod QR listy zadań"
+              width={240}
+              height={240}
+              className="rounded-lg border border-gray-200"
+            />
+            <DownloadPdfButton qrDataUrl={qrPrintDataUrl} />
+          </div>
         </div>
       </div>
     </div>
