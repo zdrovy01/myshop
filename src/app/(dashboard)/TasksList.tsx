@@ -96,6 +96,13 @@ export default function TasksList({
   const maxDate = new Date();
   maxDate.setDate(maxDate.getDate() + 2);
 
+  // Минулі дні лише для перегляду — bez edycji i dodawania.
+  const todayIso = (() => {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  })();
+  const isPast = selectedDateIso < todayIso;
+
   const dateLabel = new Intl.DateTimeFormat("pl-PL", {
     day: "numeric",
     month: "short",
@@ -191,25 +198,29 @@ export default function TasksList({
             </svg>
             {dateLabel}
           </button>
-          <button
-            type="button"
-            onClick={toggleEdit}
-            aria-pressed={editMode}
-            className={`rounded-[4px] px-4 py-2 text-sm font-medium text-white transition-colors ${
-              editMode
-                ? "bg-gray-600 hover:bg-gray-700"
-                : "bg-gray-900 hover:bg-gray-800"
-            }`}
-          >
-            {editMode ? "Zapisz" : "Edytuj"}
-          </button>
-          <button
-            type="button"
-            onClick={openAdd}
-            className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
-          >
-            Dodaj zadanie
-          </button>
+          {!isPast && (
+            <>
+              <button
+                type="button"
+                onClick={toggleEdit}
+                aria-pressed={editMode}
+                className={`rounded-[4px] px-4 py-2 text-sm font-medium text-white transition-colors ${
+                  editMode
+                    ? "bg-gray-600 hover:bg-gray-700"
+                    : "bg-gray-900 hover:bg-gray-800"
+                }`}
+              >
+                {editMode ? "Zapisz" : "Edytuj"}
+              </button>
+              <button
+                type="button"
+                onClick={openAdd}
+                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+              >
+                Dodaj zadanie
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -395,7 +406,7 @@ export default function TasksList({
                   </>
                 )}
 
-                <div className="relative">
+                <div className={`relative ${isPast ? "hidden" : ""}`}>
                   <button
                     type="button"
                     onClick={() =>

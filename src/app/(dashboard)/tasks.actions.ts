@@ -11,6 +11,11 @@ export type TaskDTO = {
   requiresPhoto: boolean;
 };
 
+function todayIso() {
+  const t = new Date();
+  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+}
+
 export async function createTask(
   name: string,
   date?: string,
@@ -21,7 +26,10 @@ export async function createTask(
   if (!trimmed) return null;
 
   const supabase = createAdminClient();
-  const taskDate = date ?? new Date().toISOString().slice(0, 10);
+  const taskDate = date ?? todayIso();
+
+  // Минулі дні лише для перегляду.
+  if (taskDate < todayIso()) return null;
 
   const { data: last } = await supabase
     .from("tasks")
@@ -76,7 +84,13 @@ export async function deleteTask(id: string): Promise<void> {
   const userId = await getSessionUserId();
   if (!userId) return;
   const supabase = createAdminClient();
-  await supabase.from("tasks").delete().eq("id", id).eq("user_id", userId);
+  // Минулі дні лише для перегляду.
+  await supabase
+    .from("tasks")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId)
+    .gte("task_date", todayIso());
   revalidatePath("/");
 }
 
@@ -86,6 +100,7 @@ export async function saveTasks(tasks: TaskDTO[]): Promise<void> {
   if (!userId) return;
   const supabase = createAdminClient();
 
+  // Минулі дні лише для перегляду — оновлюємо тільки від сьогодні.
   await Promise.all(
     tasks.map((t, i) =>
       supabase
@@ -97,7 +112,8 @@ export async function saveTasks(tasks: TaskDTO[]): Promise<void> {
           position: i,
         })
         .eq("id", t.id)
-        .eq("user_id", userId),
+        .eq("user_id", userId)
+        .gte("task_date", todayIso()),
     ),
   );
 
