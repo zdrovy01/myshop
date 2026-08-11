@@ -58,12 +58,18 @@ export default async function PublicTasksPage({
 
   const completions: Record<
     string,
-    { employeeName: string | null; note: string | null; photoUrl: string | null }
+    {
+      employeeName: string | null;
+      note: string | null;
+      photoUrl: string | null;
+      completedAt: string | null;
+    }
   > = {};
   for (const r of (completionRows ?? []) as Array<{
     task_id: string;
     note: string | null;
     photo_url: string | null;
+    completed_at: string | null;
     employee: { name: string | null } | { name: string | null }[] | null;
   }>) {
     if (completions[r.task_id]) continue; // беремо найновіше
@@ -72,6 +78,7 @@ export default async function PublicTasksPage({
       employeeName: emp?.name ?? null,
       note: r.note,
       photoUrl: r.photo_url,
+      completedAt: r.completed_at,
     };
   }
 

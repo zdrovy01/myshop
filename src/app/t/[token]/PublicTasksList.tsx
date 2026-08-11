@@ -44,7 +44,16 @@ type Completion = {
   employeeName: string | null;
   note: string | null;
   photoUrl: string | null;
+  completedAt?: string | null;
 };
+
+function formatTime(iso: string | null | undefined) {
+  if (!iso) return null;
+  return new Intl.DateTimeFormat("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
 
 export default function PublicTasksList({
   tasks,
@@ -125,6 +134,7 @@ export default function PublicTasksList({
         employeeName: employees.find((e) => e.id === employeeId)?.name ?? null,
         note: note.trim() || null,
         photoUrl: photo,
+        completedAt: new Date().toISOString(),
       },
     }));
     setDoneIds((prev) => new Set(prev).add(active.id));
@@ -180,6 +190,9 @@ export default function PublicTasksList({
                   {done && (
                     <span className="shrink-0 text-sm font-medium text-gray-400">
                       Wykonane
+                      {formatTime(info?.completedAt)
+                        ? `, ${formatTime(info?.completedAt)}`
+                        : ""}
                     </span>
                   )}
                 </div>

@@ -52,7 +52,16 @@ type Completion = {
   employeeName: string | null;
   note: string | null;
   photoUrl: string | null;
+  completedAt?: string | null;
 };
+
+function formatTime(iso: string | null | undefined) {
+  if (!iso) return null;
+  return new Intl.DateTimeFormat("pl-PL", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
 
 export default function TasksList({
   initial,
@@ -248,7 +257,7 @@ export default function TasksList({
               )
         ).map(({ task, index }, displayIndex) => {
           const rowClass = completed.has(task.id)
-            ? "bg-emerald-100 hover:bg-emerald-200/70"
+            ? "bg-gray-100 hover:bg-gray-200/70"
             : task.priority === 1
               ? "bg-rose-100 hover:bg-rose-200/70"
               : "bg-sky-100 hover:bg-sky-200/70";
@@ -318,6 +327,14 @@ export default function TasksList({
               </span>
 
               <div className="flex shrink-0 items-center gap-3">
+                {!editMode && completed.has(task.id) && (
+                  <span className="shrink-0 text-sm font-medium text-gray-400">
+                    Wykonane
+                    {formatTime(completions[task.id]?.completedAt)
+                      ? `, ${formatTime(completions[task.id]?.completedAt)}`
+                      : ""}
+                  </span>
+                )}
                 {editMode && (
                   <>
                     <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-600">
