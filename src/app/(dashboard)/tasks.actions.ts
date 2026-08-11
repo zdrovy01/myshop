@@ -11,17 +11,23 @@ export type TaskDTO = {
   requiresPhoto: boolean;
 };
 
-export async function createTask(name: string): Promise<TaskDTO | null> {
+export async function createTask(
+  name: string,
+  date?: string,
+): Promise<TaskDTO | null> {
   const userId = await getSessionUserId();
   if (!userId) return null;
   const trimmed = name.trim();
   if (!trimmed) return null;
 
   const supabase = createAdminClient();
+  const taskDate = date ?? new Date().toISOString().slice(0, 10);
+
   const { data: last } = await supabase
     .from("tasks")
     .select("position")
     .eq("user_id", userId)
+    .eq("task_date", taskDate)
     .order("position", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -35,6 +41,7 @@ export async function createTask(name: string): Promise<TaskDTO | null> {
       priority: 2,
       requires_photo: false,
       position,
+      task_date: taskDate,
     })
     .select("id, name, priority, requires_photo")
     .single();
@@ -47,6 +54,22 @@ export async function createTask(name: string): Promise<TaskDTO | null> {
     priority: data.priority === 1 ? 1 : 2,
     requiresPhoto: data.requires_photo,
   };
+}
+
+// Прибирає задачі, старші за 7 днів (вікно перегляду — минулий тиждень).
+export async function purgeOldTasks(): Promise<void> {
+  const userId = await getSessionUserId();
+  if (!userId) return;
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 7);
+
+  const supabase = createAdminClient();
+  await supabase
+    .from("tasks")
+    .delete()
+    .eq("user_id", userId)
+    .lt("task_date", cutoff.toISOString().slice(0, 10));
 }
 
 export async function deleteTask(id: string): Promise<void> {

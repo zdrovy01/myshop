@@ -29,9 +29,13 @@ function sameDay(a: Date, b: Date) {
 export default function Calendar({
   value,
   onSelect,
+  min,
+  max,
 }: {
   value: Date;
   onSelect: (d: Date) => void;
+  min?: Date;
+  max?: Date;
 }) {
   const [view, setView] = useState(
     new Date(value.getFullYear(), value.getMonth(), 1),
@@ -83,17 +87,23 @@ export default function Calendar({
           const date = new Date(year, month, d);
           const selected = sameDay(date, value);
           const isToday = sameDay(date, today);
+          const disabled =
+            (min !== undefined && date < new Date(min.getFullYear(), min.getMonth(), min.getDate())) ||
+            (max !== undefined && date > new Date(max.getFullYear(), max.getMonth(), max.getDate()));
           return (
             <button
               key={i}
               type="button"
+              disabled={disabled}
               onClick={() => onSelect(date)}
               className={`h-9 rounded-[4px] text-sm transition-colors ${
-                selected
-                  ? "bg-gray-900 text-white"
-                  : isToday
-                    ? "bg-gray-100 font-semibold text-gray-900"
-                    : "text-gray-700 hover:bg-gray-100"
+                disabled
+                  ? "cursor-not-allowed text-gray-300"
+                  : selected
+                    ? "bg-gray-900 text-white"
+                    : isToday
+                      ? "bg-gray-100 font-semibold text-gray-900"
+                      : "text-gray-700 hover:bg-gray-100"
               }`}
             >
               {d}

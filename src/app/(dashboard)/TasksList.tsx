@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Calendar from "@/components/Calendar";
 import Modal from "@/components/Modal";
@@ -67,11 +68,14 @@ export default function TasksList({
   initial,
   completedIds = [],
   completions = {},
+  selectedDate: selectedDateIso,
 }: {
   initial: Task[];
   completedIds?: string[];
   completions?: Record<string, Completion>;
+  selectedDate: string; // YYYY-MM-DD
 }) {
+  const router = useRouter();
   const completed = new Set(completedIds);
   const [tasks, setTasks] = useState(initial);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -80,8 +84,17 @@ export default function TasksList({
   const [overIndex, setOverIndex] = useState<number | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+
+  // Локальна дата з "YYYY-MM-DD" (без зсуву часових поясів).
+  const [y, m, d] = selectedDateIso.split("-").map(Number);
+  const selectedDate = new Date(y, m - 1, d);
+
+  // Вікно: минулий тиждень … +2 дні.
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() - 7);
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 2);
 
   const dateLabel = new Intl.DateTimeFormat("pl-PL", {
     day: "numeric",
@@ -131,7 +144,7 @@ export default function TasksList({
     setAddOpen(false);
 
     for (const name of names) {
-      const created = await createTask(name);
+      const created = await createTask(name, selectedDateIso);
       if (created) setTasks((prev) => [...prev, created]);
     }
   }
@@ -204,9 +217,13 @@ export default function TasksList({
         <Modal title="Wybierz datę" onClose={() => setCalendarOpen(false)}>
           <Calendar
             value={selectedDate}
+            min={minDate}
+            max={maxDate}
             onSelect={(d) => {
-              setSelectedDate(d);
               setCalendarOpen(false);
+              const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              router.push(`/?date=${iso}`);
+              router.refresh();
             }}
           />
         </Modal>

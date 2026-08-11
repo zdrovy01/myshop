@@ -1,14 +1,42 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 import TasksList, { type Task } from "./TasksList";
+import { purgeOldTasks } from "./tasks.actions";
 
-export default async function ListaZadanPage() {
+// Вікно перегляду: минулий тиждень … +2 дні.
+function clampDate(input: string | undefined): string {
+  const today = new Date();
+  const min = new Date(today);
+  min.setDate(min.getDate() - 7);
+  const max = new Date(today);
+  max.setDate(max.getDate() + 2);
+
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  if (!input || !/^\d{4}-\d{2}-\d{2}$/.test(input)) return iso(today);
+  if (input < iso(min)) return iso(min);
+  if (input > iso(max)) return iso(max);
+  return input;
+}
+
+export default async function ListaZadanPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  const selectedDate = clampDate(date);
+
   const userId = await getSessionUserId();
   const supabase = createAdminClient();
+
+  // Чистимо задачі, старші за вікно перегляду.
+  await purgeOldTasks();
+
   const { data } = await supabase
     .from("tasks")
     .select("id, name, priority, requires_photo")
     .eq("user_id", userId)
+    .eq("task_date", selectedDate)
     .order("position", { ascending: true });
 
   const tasks: Task[] = (data ?? []).map((t) => ({
@@ -63,6 +91,7 @@ export default async function ListaZadanPage() {
         initial={tasks}
         completedIds={completedIds}
         completions={completions}
+        selectedDate={selectedDate}
       />
     </div>
   );
