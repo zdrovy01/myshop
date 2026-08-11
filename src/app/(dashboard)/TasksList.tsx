@@ -273,7 +273,7 @@ export default function TasksList({
         </Modal>
       )}
 
-      <ul className="-mx-8 flex flex-col">
+      <ul className="-mx-8 flex flex-col divide-y divide-gray-200">
         {(editMode
           ? tasks.map((task, index) => ({ task, index }))
           : tasks
@@ -284,11 +284,10 @@ export default function TasksList({
                   Number(completed.has(b.task.id)),
               )
         ).map(({ task, index }, displayIndex) => {
-          const rowClass = completed.has(task.id)
-            ? "bg-gray-100 hover:bg-gray-200/70"
-            : task.priority === 1
+          const rowClass =
+            task.priority === 1
               ? "bg-rose-100 hover:bg-rose-200/70"
-              : "bg-sky-100 hover:bg-sky-200/70";
+              : "bg-white hover:bg-gray-50";
 
           return (
             <li
@@ -355,14 +354,19 @@ export default function TasksList({
               </span>
 
               <div className="flex shrink-0 items-center gap-3">
-                {!editMode && completed.has(task.id) && (
-                  <span className="shrink-0 text-sm font-medium text-gray-400">
-                    Wykonane
-                    {formatTime(completions[task.id]?.completedAt)
-                      ? `, ${formatTime(completions[task.id]?.completedAt)}`
-                      : ""}
-                  </span>
-                )}
+                {!editMode &&
+                  (completed.has(task.id) ? (
+                    <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
+                      Wykonane
+                      {formatTime(completions[task.id]?.completedAt)
+                        ? `, ${formatTime(completions[task.id]?.completedAt)}`
+                        : ""}
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200">
+                      Aktywne
+                    </span>
+                  ))}
                 {editMode && (
                   <>
                     <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-600">

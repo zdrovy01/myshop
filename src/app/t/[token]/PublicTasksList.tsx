@@ -162,12 +162,8 @@ export default function PublicTasksList({
                 key={task.id}
                 onClick={done ? undefined : () => openComplete(task)}
                 className={`px-5 py-4 transition-[filter] sm:px-8 ${
-                  done
-                    ? "bg-gray-100"
-                    : task.priority === 1
-                      ? "cursor-pointer bg-rose-100 hover:brightness-95"
-                      : "cursor-pointer bg-sky-100 hover:brightness-95"
-                }`}
+                  task.priority === 1 ? "bg-rose-100" : "bg-white"
+                } ${done ? "" : "cursor-pointer hover:brightness-95"}`}
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex min-w-0 items-center gap-3">
@@ -187,12 +183,16 @@ export default function PublicTasksList({
                       </span>
                     )}
                   </span>
-                  {done && (
-                    <span className="shrink-0 text-sm font-medium text-gray-400">
+                  {done ? (
+                    <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
                       Wykonane
                       {formatTime(info?.completedAt)
                         ? `, ${formatTime(info?.completedAt)}`
                         : ""}
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200">
+                      Aktywne
                     </span>
                   )}
                 </div>
