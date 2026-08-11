@@ -177,11 +177,6 @@ export default function PublicTasksList({
                     >
                       {task.name}
                     </span>
-                    {done && info?.employeeName && (
-                      <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
-                        {info.employeeName}
-                      </span>
-                    )}
                   </span>
                   {done ? (
                     <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
@@ -197,8 +192,13 @@ export default function PublicTasksList({
                   )}
                 </div>
 
-                {done && (info?.note || info?.photoUrl) && (
-                  <div className="mt-2 flex flex-col gap-2 pl-0">
+                {done && (
+                  <div className="mt-2 flex flex-col items-start gap-2 pl-0">
+                    {info?.employeeName && (
+                      <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
+                        {info.employeeName}
+                      </span>
+                    )}
                     {info?.note && (
                       <p className="text-sm text-gray-500">{info.note}</p>
                     )}

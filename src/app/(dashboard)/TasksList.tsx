@@ -344,13 +344,6 @@ export default function TasksList({
                 ) : (
                   <span className="truncate">{task.name}</span>
                 )}
-                {!editMode &&
-                  completed.has(task.id) &&
-                  completions[task.id]?.employeeName && (
-                    <span className="shrink-0 rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300">
-                      {completions[task.id].employeeName}
-                    </span>
-                  )}
               </span>
 
               <div className="flex shrink-0 items-center gap-3">
@@ -447,11 +440,13 @@ export default function TasksList({
               </div>
               </div>
 
-              {!editMode &&
-                completed.has(task.id) &&
-                (completions[task.id]?.note ||
-                  completions[task.id]?.photoUrl) && (
-                  <div className="mt-2 flex flex-col gap-2">
+              {!editMode && completed.has(task.id) && (
+                  <div className="mt-2 flex flex-col items-start gap-2">
+                    {completions[task.id]?.employeeName && (
+                      <span className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300">
+                        {completions[task.id].employeeName}
+                      </span>
+                    )}
                     {completions[task.id]?.note && (
                       <p className="text-sm text-gray-600">
                         {completions[task.id].note}
