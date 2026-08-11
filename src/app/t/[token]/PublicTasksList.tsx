@@ -171,7 +171,7 @@ export default function PublicTasksList({
                       {index + 1}
                     </span>
                     <span
-                      className={`truncate text-base font-medium ${
+                      className={`truncate text-base font-medium first-letter:uppercase ${
                         done ? "text-gray-400" : "text-gray-900"
                       }`}
                     >
@@ -193,15 +193,17 @@ export default function PublicTasksList({
                 </div>
 
                 {done && (
-                  <div className="mt-2 flex flex-col items-start gap-2 pl-0">
-                    {info?.employeeName && (
-                      <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
-                        {info.employeeName}
-                      </span>
-                    )}
-                    {info?.note && (
-                      <p className="text-sm text-gray-500">{info.note}</p>
-                    )}
+                  <div className="mt-2 flex flex-col items-start gap-2 pl-7">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {info?.employeeName && (
+                        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
+                          {info.employeeName}
+                        </span>
+                      )}
+                      {info?.note && (
+                        <p className="text-sm text-gray-500">{info.note}</p>
+                      )}
+                    </div>
                     {info?.photoUrl && (
                       <PhotoThumb src={info.photoUrl} alt="Zdjęcie wykonania" />
                     )}

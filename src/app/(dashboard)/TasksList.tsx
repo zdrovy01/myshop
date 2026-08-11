@@ -342,7 +342,9 @@ export default function TasksList({
                     className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-900 outline-none focus:border-gray-900"
                   />
                 ) : (
-                  <span className="truncate">{task.name}</span>
+                  <span className="truncate first-letter:uppercase">
+                    {task.name}
+                  </span>
                 )}
               </span>
 
@@ -441,7 +443,8 @@ export default function TasksList({
               </div>
 
               {!editMode && completed.has(task.id) && (
-                  <div className="mt-2 flex flex-col items-start gap-2">
+                <div className="mt-2 flex flex-col items-start gap-2 pl-7">
+                  <div className="flex flex-wrap items-center gap-2">
                     {completions[task.id]?.employeeName && (
                       <span className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300">
                         {completions[task.id].employeeName}
@@ -452,14 +455,15 @@ export default function TasksList({
                         {completions[task.id].note}
                       </p>
                     )}
-                    {completions[task.id]?.photoUrl && (
-                      <PhotoThumb
-                        src={completions[task.id].photoUrl!}
-                        alt="Zdjęcie wykonania"
-                      />
-                    )}
                   </div>
-                )}
+                  {completions[task.id]?.photoUrl && (
+                    <PhotoThumb
+                      src={completions[task.id].photoUrl!}
+                      alt="Zdjęcie wykonania"
+                    />
+                  )}
+                </div>
+              )}
             </li>
           );
         })}
