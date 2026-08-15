@@ -156,6 +156,7 @@ type SidebarUser = {
 
 export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   const [open, setOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -177,11 +178,43 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   const isZabka = user?.shopName === "Żabka";
 
   return (
-    <aside
-      className={`sticky top-0 flex h-screen shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-[width] duration-300 ease-in-out ${
-        open ? "w-72" : "w-[72px]"
-      }`}
-    >
+    <>
+      {/* Мобільна верхня панель */}
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden">
+        <Image
+          src="/logo.png"
+          alt="MyShop by zdrovy"
+          width={1555}
+          height={400}
+          priority
+          className="h-auto w-24"
+        />
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Otwórz menu"
+          className="rounded-[4px] p-2 text-gray-700 hover:bg-gray-100"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Бекдроп для мобільної шухляди */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-[transform,width] duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        } ${open ? "" : "md:w-[72px]"}`}
+      >
       <div className="flex h-[76px] items-center justify-between px-4">
         {open && (
           <Image
@@ -197,7 +230,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           type="button"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Zamknij panel" : "Otwórz panel"}
-          className="rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+          className="hidden rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 md:inline-flex"
         >
           <ChevronIcon direction={open ? "left" : "right"} />
         </button>
@@ -210,6 +243,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={() => setMobileOpen(false)}
                   aria-label={item.label}
                   title={!open ? item.label : undefined}
                   className={`flex w-full items-center gap-3 whitespace-nowrap rounded-[4px] px-3 py-2.5 text-left text-sm font-medium transition-colors ${
@@ -266,6 +300,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           </>
         )}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

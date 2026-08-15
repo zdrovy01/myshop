@@ -174,7 +174,7 @@ export default function TasksList({
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold text-gray-900">Lista zadań</h1>
         <div className="flex items-center gap-2">
           <button
@@ -273,7 +273,7 @@ export default function TasksList({
         </Modal>
       )}
 
-      <ul className="-mx-8 flex flex-col divide-y divide-gray-200">
+      <ul className="-mx-4 flex flex-col divide-y divide-gray-200 md:-mx-8">
         {(editMode
           ? tasks.map((task, index) => ({ task, index }))
           : tasks
@@ -305,7 +305,7 @@ export default function TasksList({
                   setOverIndex(null);
                 }
               }}
-              className={`px-8 py-4 transition-colors ${rowClass} ${
+              className={`px-4 py-4 transition-colors md:px-8 ${rowClass} ${
                 dragIndex === index ? "opacity-40" : ""
               } ${
                 overIndex === index && dragIndex !== index
@@ -351,14 +351,14 @@ export default function TasksList({
               <div className="flex shrink-0 items-center gap-3">
                 {!editMode &&
                   (completed.has(task.id) ? (
-                    <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
+                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400">
                       Wykonane
                       {formatTime(completions[task.id]?.completedAt)
                         ? `, ${formatTime(completions[task.id]?.completedAt)}`
                         : ""}
                     </span>
                   ) : (
-                    <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200">
+                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-emerald-600">
                       Aktywne
                     </span>
                   ))}
