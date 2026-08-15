@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { todayWarsaw } from "@/lib/date";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 
@@ -12,8 +13,7 @@ export type TaskDTO = {
 };
 
 function todayIso() {
-  const t = new Date();
-  return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  return todayWarsaw();
 }
 
 export async function createTask(
@@ -69,15 +69,17 @@ export async function purgeOldTasks(): Promise<void> {
   const userId = await getSessionUserId();
   if (!userId) return;
 
-  const cutoff = new Date();
+  const [ty, tm, td] = todayWarsaw().split("-").map(Number);
+  const cutoff = new Date(ty, tm - 1, td);
   cutoff.setDate(cutoff.getDate() - 7);
+  const cutoffIso = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
 
   const supabase = createAdminClient();
   await supabase
     .from("tasks")
     .delete()
     .eq("user_id", userId)
-    .lt("task_date", cutoff.toISOString().slice(0, 10));
+    .lt("task_date", cutoffIso);
 }
 
 export async function deleteTask(id: string): Promise<void> {

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { todayWarsaw } from "@/lib/date";
 import { createAdminClient } from "@/lib/supabase/admin";
 import PublicTasksList, {
   type PublicEmployee,
@@ -26,7 +27,7 @@ export default async function PublicTasksPage({
       .from("tasks")
       .select("id, name, priority, requires_photo")
       .eq("user_id", user.id)
-      .eq("task_date", new Date().toISOString().slice(0, 10))
+      .eq("task_date", todayWarsaw())
       .order("position", { ascending: true }),
     supabase
       .from("employees")

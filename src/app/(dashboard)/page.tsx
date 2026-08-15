@@ -2,19 +2,25 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 import TasksList, { type Task } from "./TasksList";
 import { purgeOldTasks } from "./tasks.actions";
+import { todayWarsaw } from "@/lib/date";
 
-// Вікно перегляду: минулий тиждень … +2 дні.
+const isoLocal = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+// Вікно перегляду: минулий тиждень … +2 дні (за польським часом).
 function clampDate(input: string | undefined): string {
-  const today = new Date();
-  const min = new Date(today);
+  const todayStr = todayWarsaw();
+  const [ty, tm, td] = todayStr.split("-").map(Number);
+  const base = new Date(ty, tm - 1, td);
+
+  const min = new Date(base);
   min.setDate(min.getDate() - 7);
-  const max = new Date(today);
+  const max = new Date(base);
   max.setDate(max.getDate() + 2);
 
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  if (!input || !/^\d{4}-\d{2}-\d{2}$/.test(input)) return iso(today);
-  if (input < iso(min)) return iso(min);
-  if (input > iso(max)) return iso(max);
+  if (!input || !/^\d{4}-\d{2}-\d{2}$/.test(input)) return todayStr;
+  if (input < isoLocal(min)) return isoLocal(min);
+  if (input > isoLocal(max)) return isoLocal(max);
   return input;
 }
 
