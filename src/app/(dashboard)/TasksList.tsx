@@ -174,13 +174,13 @@ export default function TasksList({
 
   return (
     <>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Lista zadań</h1>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="flex items-center gap-2 rounded-[4px] border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex items-center gap-2 whitespace-nowrap rounded-[4px] border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             <svg
               width="16"
@@ -204,7 +204,7 @@ export default function TasksList({
                 type="button"
                 onClick={toggleEdit}
                 aria-pressed={editMode}
-                className={`rounded-[4px] px-4 py-2 text-sm font-medium text-white transition-colors ${
+                className={`whitespace-nowrap rounded-[4px] px-3 py-2 text-sm font-medium text-white transition-colors ${
                   editMode
                     ? "bg-gray-600 hover:bg-gray-700"
                     : "bg-gray-900 hover:bg-gray-800"
@@ -215,7 +215,7 @@ export default function TasksList({
               <button
                 type="button"
                 onClick={openAdd}
-                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                className="ml-auto whitespace-nowrap rounded-[4px] bg-gray-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 md:ml-0"
               >
                 Dodaj zadanie
               </button>
