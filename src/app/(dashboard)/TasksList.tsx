@@ -242,7 +242,7 @@ export default function TasksList({
             {dateLabel}
           </button>
           {!isPast && (
-            <>
+            <div className="ml-auto flex items-center gap-2 md:ml-0">
               <button
                 type="button"
                 onClick={toggleEdit}
@@ -258,11 +258,11 @@ export default function TasksList({
               <button
                 type="button"
                 onClick={openAdd}
-                className="ml-auto whitespace-nowrap rounded-[4px] bg-[#2f2f37] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] md:ml-0"
+                className="whitespace-nowrap rounded-[4px] bg-[#2f2f37] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42]"
               >
                 Dodaj zadanie
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>
