@@ -55,6 +55,57 @@ function formatTime(iso: string | null | undefined) {
   }).format(new Date(iso));
 }
 
+function initials(name: string) {
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0])
+      .join("")
+      .toUpperCase() || "?"
+  );
+}
+
+function Avatar({ name }: { name: string }) {
+  return (
+    <span
+      title={name}
+      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2f37] text-[10px] font-semibold text-gray-200 ring-2 ring-[#1a1a1e] first:ml-0"
+    >
+      {initials(name)}
+    </span>
+  );
+}
+
+function PriorityTag() {
+  return (
+    <span className="rounded-full bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-400 ring-1 ring-rose-500/30">
+      Priorytet 1
+    </span>
+  );
+}
+
+function FotoTag() {
+  return (
+    <span className="flex items-center gap-1 rounded-full bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-300 ring-1 ring-sky-500/30">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+        <circle cx="12" cy="13" r="4" />
+      </svg>
+      Foto
+    </span>
+  );
+}
+
+function NameTag({ name }: { name: string }) {
+  return (
+    <span className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]">
+      {name}
+    </span>
+  );
+}
+
 export default function PublicTasksList({
   tasks,
   employees,
@@ -164,64 +215,72 @@ export default function PublicTasksList({
 
   return (
     <>
-      <ul className="-mx-5 flex flex-col divide-y divide-[#26262b] sm:-mx-8">
+      <ul className="flex flex-col gap-3">
         {[...tasks]
           .sort(
             (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
           )
-          .map((task, index) => {
+          .map((task) => {
             const done = doneIds.has(task.id);
             const info = details[task.id];
             return (
               <li
                 key={task.id}
                 onClick={done ? undefined : () => openComplete(task)}
-                className={`px-5 py-4 transition-[filter] sm:px-8 ${
-                  task.priority === 1 ? "bg-rose-950/40" : "bg-[#1a1a1e]"
-                } ${done ? "" : "cursor-pointer hover:brightness-95"}`}
+                className={`rounded-xl border border-[#26262b] bg-[#161619] p-4 transition-colors ${
+                  done ? "" : "cursor-pointer hover:border-[#3a3a42]"
+                }`}
               >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="flex min-w-0 items-center gap-3">
-                    <span className="w-4 shrink-0 text-xs text-gray-400">
-                      {index + 1}
+                {/* Верх: час виконання + аватарки виконавців */}
+                {done && (
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7v5l3 2" />
+                      </svg>
+                      {formatTime(info?.completedAt) ?? "Wykonane"}
                     </span>
-                    <span
-                      className={`truncate text-base font-medium first-letter:uppercase ${
-                        done ? "text-gray-400" : "text-gray-100"
-                      }`}
-                    >
-                      {task.name}
-                    </span>
-                  </span>
-                  {done ? (
-                    <span className="shrink-0 rounded-full bg-[#232327] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-[#34343c]">
-                      Wykonane
-                      {formatTime(info?.completedAt)
-                        ? `, ${formatTime(info?.completedAt)}`
-                        : ""}
-                    </span>
-                  ) : (
-                    <span className="shrink-0 rounded-full bg-emerald-950/40 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-400 ring-1 ring-emerald-800/60">
+                    {info?.performers && info.performers.length > 0 && (
+                      <span className="flex items-center pl-2">
+                        {info.performers.map((name) => (
+                          <Avatar key={name} name={name} />
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Назва */}
+                <h3
+                  className={`text-base font-medium first-letter:uppercase ${
+                    done ? "text-gray-300" : "text-gray-100"
+                  }`}
+                >
+                  {task.name}
+                </h3>
+
+                {/* Теги */}
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {task.priority === 1 && <PriorityTag />}
+                  {task.requiresPhoto && <FotoTag />}
+                  {!done && (
+                    <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-emerald-500/30">
                       Aktywne
                     </span>
                   )}
+                  {done &&
+                    info?.performers?.map((name) => (
+                      <NameTag key={name} name={name} />
+                    ))}
                 </div>
 
-                {done && (
-                  <div className="mt-2 flex flex-col items-start gap-2 pl-7">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {info?.performers?.map((name) => (
-                        <span
-                          key={name}
-                          className="rounded-full bg-[#1a1a1e] px-2 py-0.5 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
-                        >
-                          {name}
-                        </span>
-                      ))}
-                      {info?.note && (
-                        <p className="text-sm text-gray-400">{info.note}</p>
-                      )}
-                    </div>
+                {/* Примітка й фото */}
+                {done && (info?.note || info?.photoUrl) && (
+                  <div className="mt-3 flex flex-col items-start gap-2">
+                    {info?.note && (
+                      <p className="text-sm text-gray-400">{info.note}</p>
+                    )}
                     {info?.photoUrl && (
                       <PhotoThumb src={info.photoUrl} alt="Zdjęcie wykonania" />
                     )}

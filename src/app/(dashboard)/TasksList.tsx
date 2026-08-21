@@ -64,6 +64,49 @@ function formatTime(iso: string | null | undefined) {
   }).format(new Date(iso));
 }
 
+function initials(name: string) {
+  return (
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0])
+      .join("")
+      .toUpperCase() || "?"
+  );
+}
+
+function Avatar({ name }: { name: string }) {
+  return (
+    <span
+      title={name}
+      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2f37] text-[10px] font-semibold text-gray-200 ring-2 ring-[#161619] first:ml-0"
+    >
+      {initials(name)}
+    </span>
+  );
+}
+
+function PriorityTag() {
+  return (
+    <span className="rounded-full bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-400 ring-1 ring-rose-500/30">
+      Priorytet 1
+    </span>
+  );
+}
+
+function FotoTag() {
+  return (
+    <span className="flex items-center gap-1 rounded-full bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-300 ring-1 ring-sky-500/30">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+        <circle cx="12" cy="13" r="4" />
+      </svg>
+      Foto
+    </span>
+  );
+}
+
 export default function TasksList({
   initial,
   completedIds = [],
@@ -273,7 +316,7 @@ export default function TasksList({
         </Modal>
       )}
 
-      <ul className="-mx-4 flex flex-col divide-y divide-[#26262b] md:-mx-8">
+      <ul className="flex flex-col gap-3">
         {(editMode
           ? tasks.map((task, index) => ({ task, index }))
           : tasks
@@ -283,11 +326,9 @@ export default function TasksList({
                   Number(completed.has(a.task.id)) -
                   Number(completed.has(b.task.id)),
               )
-        ).map(({ task, index }, displayIndex) => {
-          const rowClass =
-            task.priority === 1
-              ? "bg-rose-950/40 hover:bg-rose-950/60"
-              : "bg-[#1a1a1e] hover:bg-[#232327]";
+        ).map(({ task, index }) => {
+          const done = completed.has(task.id);
+          const info = completions[task.id];
 
           return (
             <li
@@ -305,65 +346,42 @@ export default function TasksList({
                   setOverIndex(null);
                 }
               }}
-              className={`px-4 py-4 transition-colors md:px-8 ${rowClass} ${
+              className={`rounded-xl border border-[#26262b] bg-[#161619] p-4 transition-colors ${
                 dragIndex === index ? "opacity-40" : ""
               } ${
                 overIndex === index && dragIndex !== index
-                  ? "shadow-[inset_0_2px_0_0_#111827]"
+                  ? "border-[#3a3a42]"
                   : ""
               }`}
             >
-              <div className="flex items-center justify-between gap-2">
-              <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-100">
-                {editMode ? (
-                  <span
-                    draggable
-                    onDragStart={() => setDragIndex(index)}
-                    onDragEnd={() => {
-                      setDragIndex(null);
-                      setOverIndex(null);
-                    }}
-                    aria-label="Przeciągnij, aby zmienić kolejność"
-                    title="Przeciągnij, aby zmienić kolejność"
-                    className="flex w-5 shrink-0 cursor-grab justify-center text-gray-400 active:cursor-grabbing"
-                  >
-                    <GripIcon />
+              {editMode ? (
+                /* --- Режим редагування --- */
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-100">
+                    <span
+                      draggable
+                      onDragStart={() => setDragIndex(index)}
+                      onDragEnd={() => {
+                        setDragIndex(null);
+                        setOverIndex(null);
+                      }}
+                      aria-label="Przeciągnij, aby zmienić kolejność"
+                      title="Przeciągnij, aby zmienić kolejność"
+                      className="flex w-5 shrink-0 cursor-grab justify-center text-gray-400 active:cursor-grabbing"
+                    >
+                      <GripIcon />
+                    </span>
+                    <input
+                      value={task.name}
+                      onChange={(e) =>
+                        updateTask(index, { name: e.target.value })
+                      }
+                      aria-label="Nazwa zadania"
+                      className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-100 outline-none focus:border-gray-400"
+                    />
                   </span>
-                ) : (
-                  <span className="w-4 shrink-0 text-xs text-gray-400">
-                    {displayIndex + 1}
-                  </span>
-                )}
-                {editMode ? (
-                  <input
-                    value={task.name}
-                    onChange={(e) => updateTask(index, { name: e.target.value })}
-                    aria-label="Nazwa zadania"
-                    className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-100 outline-none focus:border-gray-400"
-                  />
-                ) : (
-                  <span className="truncate first-letter:uppercase">
-                    {task.name}
-                  </span>
-                )}
-              </span>
 
-              <div className="flex shrink-0 items-center gap-3">
-                {!editMode &&
-                  (completed.has(task.id) ? (
-                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400">
-                      Wykonane
-                      {formatTime(completions[task.id]?.completedAt)
-                        ? `, ${formatTime(completions[task.id]?.completedAt)}`
-                        : ""}
-                    </span>
-                  ) : (
-                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-emerald-400">
-                      Aktywne
-                    </span>
-                  ))}
-                {editMode && (
-                  <>
+                  <div className="flex shrink-0 items-center gap-3">
                     <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-300">
                       <span>Foto</span>
                       <button
@@ -376,11 +394,11 @@ export default function TasksList({
                           })
                         }
                         className={`relative h-5 w-9 rounded-full transition-colors ${
-                          task.requiresPhoto ? "bg-[#2f2f37]" : "bg-gray-300"
+                          task.requiresPhoto ? "bg-emerald-600" : "bg-[#34343c]"
                         }`}
                       >
                         <span
-                          className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-[#1a1a1e] transition-transform ${
+                          className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
                             task.requiresPhoto
                               ? "translate-x-[18px]"
                               : "translate-x-0.5"
@@ -402,70 +420,142 @@ export default function TasksList({
                       <option value={1}>Priorytet 1</option>
                       <option value={2}>Priorytet 2</option>
                     </select>
-                  </>
-                )}
 
-                <div className={`relative ${isPast ? "hidden" : ""}`}>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenIndex((cur) => (cur === index ? null : index))
-                    }
-                    aria-label="Opcje"
-                    title="Opcje"
-                    className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#1a1a1e] hover:text-gray-100"
-                  >
-                    <DotsIcon />
-                  </button>
-
-                  {openIndex === index && (
-                    <>
+                    <div className="relative">
                       <button
                         type="button"
-                        aria-hidden="true"
-                        tabIndex={-1}
-                        onClick={() => setOpenIndex(null)}
-                        className="fixed inset-0 z-10 cursor-default"
-                      />
-                      <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                        onClick={() =>
+                          setOpenIndex((cur) => (cur === index ? null : index))
+                        }
+                        aria-label="Opcje"
+                        title="Opcje"
+                        className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                      >
+                        <DotsIcon />
+                      </button>
+                      {openIndex === index && (
+                        <>
+                          <button
+                            type="button"
+                            aria-hidden="true"
+                            tabIndex={-1}
+                            onClick={() => setOpenIndex(null)}
+                            className="fixed inset-0 z-10 cursor-default"
+                          />
+                          <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(index)}
+                              className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
+                            >
+                              Usuń
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* --- Режим перегляду (картка) --- */
+                <>
+                  {done && (
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M12 7v5l3 2" />
+                        </svg>
+                        {formatTime(info?.completedAt) ?? "Wykonane"}
+                      </span>
+                      {info?.performers && info.performers.length > 0 && (
+                        <span className="flex items-center pl-2">
+                          {info.performers.map((name) => (
+                            <Avatar key={name} name={name} />
+                          ))}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <h3
+                    className={`text-base font-medium first-letter:uppercase ${
+                      done ? "text-gray-300" : "text-gray-100"
+                    }`}
+                  >
+                    {task.name}
+                  </h3>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    {task.priority === 1 && <PriorityTag />}
+                    {task.requiresPhoto && <FotoTag />}
+                    {!done && (
+                      <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-emerald-500/30">
+                        Aktywne
+                      </span>
+                    )}
+                    {done &&
+                      info?.performers?.map((name) => (
+                        <span
+                          key={name}
+                          className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    {!isPast && (
+                      <div className="relative ml-auto">
                         <button
                           type="button"
-                          onClick={() => handleDelete(index)}
-                          className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
+                          onClick={() =>
+                            setOpenIndex((cur) =>
+                              cur === index ? null : index,
+                            )
+                          }
+                          aria-label="Opcje"
+                          title="Opcje"
+                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
                         >
-                          Usuń
+                          <DotsIcon />
                         </button>
+                        {openIndex === index && (
+                          <>
+                            <button
+                              type="button"
+                              aria-hidden="true"
+                              tabIndex={-1}
+                              onClick={() => setOpenIndex(null)}
+                              className="fixed inset-0 z-10 cursor-default"
+                            />
+                            <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(index)}
+                                className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
+                              >
+                                Usuń
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    </>
-                  )}
-                </div>
-              </div>
-              </div>
-
-              {!editMode && completed.has(task.id) && (
-                <div className="mt-2 flex flex-col items-start gap-2 pl-7">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {completions[task.id]?.performers?.map((name) => (
-                      <span
-                        key={name}
-                        className="rounded-full bg-[#26262b] px-2 py-0.5 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
-                      >
-                        {name}
-                      </span>
-                    ))}
-                    {completions[task.id]?.note && (
-                      <p className="text-sm text-gray-300">
-                        {completions[task.id].note}
-                      </p>
                     )}
                   </div>
-                  {completions[task.id]?.photoUrl && (
-                    <PhotoThumb
-                      src={completions[task.id].photoUrl!}
-                      alt="Zdjęcie wykonania"
-                    />
+
+                  {done && (info?.note || info?.photoUrl) && (
+                    <div className="mt-3 flex flex-col items-start gap-2">
+                      {info?.note && (
+                        <p className="text-sm text-gray-400">{info.note}</p>
+                      )}
+                      {info?.photoUrl && (
+                        <PhotoThumb
+                          src={info.photoUrl}
+                          alt="Zdjęcie wykonania"
+                        />
+                      )}
+                    </div>
                   )}
-                </div>
+                </>
               )}
             </li>
           );
