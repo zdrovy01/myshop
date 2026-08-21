@@ -25,25 +25,6 @@ function ListaZadanIcon() {
   );
 }
 
-function StatystykaIcon() {
-  return (
-    <svg
-      width="21"
-      height="14"
-      viewBox="0 0 43 28"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-      aria-hidden="true"
-    >
-      <path
-        d="M21.4688 27.4219C8.5 27.4219 0 16.875 0 13.7031C0 10.5469 8.5 0 21.4688 0C34.6406 0 42.9531 10.5469 42.9531 13.7031C42.9531 16.875 34.6406 27.4219 21.4688 27.4219ZM21.4844 21.7969C25.9375 21.7969 29.5625 18.1875 29.5625 13.7188C29.5625 9.25 25.9375 5.64062 21.4844 5.64062C17.0156 5.64062 13.3906 9.25 13.3906 13.7188C13.3906 18.1875 17.0156 21.7969 21.4844 21.7969ZM21.4844 17.0312C19.6406 17.0312 18.1719 15.5469 18.1719 13.7188C18.1719 11.8906 19.6406 10.4062 21.4844 10.4062C23.3125 10.4062 24.7812 11.8906 24.7812 13.7188C24.7812 15.5469 23.3125 17.0312 21.4844 17.0312Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 function PracownikiIcon() {
   return (
     <svg
@@ -141,7 +122,6 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
 
 const navItems: { label: string; href: string; icon: React.ReactNode }[] = [
   { label: "Lista zadań", href: "/", icon: <ListaZadanIcon /> },
-  { label: "Statystyka", href: "/statistics", icon: <StatystykaIcon /> },
   { label: "Pracownicy", href: "/employees", icon: <PracownikiIcon /> },
   { label: "Ustawienia", href: "/settings", icon: <UstawieniaIcon /> },
   { label: "Subskrypcja", href: "/subscription", icon: <SubskrypcjaIcon /> },
