@@ -4,7 +4,7 @@ export default function LanguageSettingsPage() {
   return (
     <div className="py-8">
       <BackHeader href="/settings" title="Język" />
-      <p className="text-sm text-gray-500">Wkrótce.</p>
+      <p className="text-sm text-gray-400">Wkrótce.</p>
     </div>
   );
 }

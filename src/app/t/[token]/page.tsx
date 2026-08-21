@@ -89,14 +89,14 @@ export default async function PublicTasksPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f4f6] sm:px-4 sm:py-10">
-      <div className="mx-auto w-full max-w-2xl overflow-hidden bg-white px-5 py-6 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-gray-200">
-        <h1 className="mb-5 text-2xl font-semibold text-gray-900 sm:mb-6">
+    <div className="min-h-screen bg-[#0b0b0d] sm:px-4 sm:py-10">
+      <div className="mx-auto w-full max-w-2xl overflow-hidden bg-[#1a1a1e] px-5 py-6 sm:rounded-2xl sm:px-8 sm:py-8 sm:shadow-sm sm:ring-1 sm:ring-[#34343c]">
+        <h1 className="mb-5 text-2xl font-semibold text-gray-100 sm:mb-6">
           Lista zadań
         </h1>
 
         {tasks.length === 0 ? (
-          <p className="text-sm text-gray-500">Brak zadań.</p>
+          <p className="text-sm text-gray-400">Brak zadań.</p>
         ) : (
           <PublicTasksList
             tasks={tasks}

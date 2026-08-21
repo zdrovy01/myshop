@@ -6,8 +6,8 @@ import BackHeader from "@/components/BackHeader";
 import { updateProfile } from "./actions";
 
 const fieldClass =
-  "rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900";
-const labelClass = "text-sm font-medium text-gray-700";
+  "rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400";
+const labelClass = "text-sm font-medium text-gray-200";
 
 export type SettingsInitial = {
   phone: string;
@@ -70,7 +70,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
           <input
             value={initial.phone}
             disabled
-            className={`${fieldClass} cursor-not-allowed bg-gray-50 text-gray-500`}
+            className={`${fieldClass} cursor-not-allowed bg-[#232327] text-gray-400`}
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
             id="shopType"
             value={shopType}
             onChange={(e) => setShopType(e.target.value as "zabka" | "other")}
-            className={`${fieldClass} bg-white`}
+            className={`${fieldClass} bg-[#1a1a1e]`}
           >
             <option value="zabka">Żabka</option>
             <option value="other">Inny sklep</option>
@@ -157,13 +157,13 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
         {saved && <p className="text-sm text-green-600">Zapisano zmiany.</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 self-start rounded-[4px] bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+          className="mt-2 self-start rounded-[4px] bg-[#2f2f37] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] disabled:opacity-50"
         >
           {loading ? "..." : "Zapisz zmiany"}
         </button>

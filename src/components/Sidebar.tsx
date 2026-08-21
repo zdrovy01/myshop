@@ -180,20 +180,20 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   return (
     <>
       {/* Мобільна верхня панель */}
-      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 md:hidden">
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-[#26262b] bg-[#1a1a1e] px-4 md:hidden">
         <Image
           src="/logo.png"
           alt="MyShop by zdrovy"
           width={1555}
           height={400}
           priority
-          className="h-auto w-24"
+          className="h-auto w-24 invert"
         />
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Otwórz menu"
-          className="rounded-[4px] p-2 text-gray-700 hover:bg-gray-100"
+          className="rounded-[4px] p-2 text-gray-200 hover:bg-[#232327]"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" />
@@ -211,7 +211,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white transition-[transform,width] duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-[#26262b] bg-[#1a1a1e] transition-[transform,width] duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } ${open ? "" : "md:w-[72px]"}`}
       >
@@ -223,14 +223,14 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
             width={1555}
             height={400}
             priority
-            className="h-auto w-1/2"
+            className="h-auto w-1/2 invert"
           />
         )}
         <button
           type="button"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Zamknij panel" : "Otwórz panel"}
-          className="hidden rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 md:inline-flex"
+          className="hidden rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-gray-100 md:inline-flex"
         >
           <ChevronIcon direction={open ? "left" : "right"} />
         </button>
@@ -248,8 +248,8 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
                   title={!open ? item.label : undefined}
                   className={`flex w-full items-center gap-3 whitespace-nowrap rounded-[4px] px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-[#2f2f37] text-white"
+                      : "text-gray-400 hover:bg-[#232327] hover:text-gray-100"
                   }`}
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center">
@@ -262,10 +262,10 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           })}
         </ul>
       </nav>
-      <div className="mt-auto flex items-center gap-3 border-t border-gray-200 p-4">
+      <div className="mt-auto flex items-center gap-3 border-t border-[#26262b] p-4">
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-600 ${
-            isZabka ? "bg-white ring-1 ring-gray-200" : "bg-gray-200"
+          className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-300 ${
+            isZabka ? "bg-[#1a1a1e] ring-1 ring-[#34343c]" : "bg-[#2a2a30]"
           }`}
         >
           {isZabka ? (
@@ -283,17 +283,17 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
         {open && (
           <>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-gray-900">
+              <p className="truncate text-sm font-semibold text-gray-100">
                 {fullName}
               </p>
-              <p className="truncate text-xs text-gray-500">{secondary}</p>
+              <p className="truncate text-xs text-gray-400">{secondary}</p>
             </div>
             <button
               type="button"
               onClick={handleLogout}
               aria-label="Wyloguj się"
               title="Wyloguj się"
-              className="ml-auto shrink-0 rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+              className="ml-auto shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-gray-100"
             >
               <LogoutIcon />
             </button>

@@ -164,7 +164,7 @@ export default function PublicTasksList({
 
   return (
     <>
-      <ul className="-mx-5 flex flex-col divide-y divide-gray-200 sm:-mx-8">
+      <ul className="-mx-5 flex flex-col divide-y divide-[#26262b] sm:-mx-8">
         {[...tasks]
           .sort(
             (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
@@ -177,7 +177,7 @@ export default function PublicTasksList({
                 key={task.id}
                 onClick={done ? undefined : () => openComplete(task)}
                 className={`px-5 py-4 transition-[filter] sm:px-8 ${
-                  task.priority === 1 ? "bg-rose-100" : "bg-white"
+                  task.priority === 1 ? "bg-rose-950/40" : "bg-[#1a1a1e]"
                 } ${done ? "" : "cursor-pointer hover:brightness-95"}`}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -187,21 +187,21 @@ export default function PublicTasksList({
                     </span>
                     <span
                       className={`truncate text-base font-medium first-letter:uppercase ${
-                        done ? "text-gray-400" : "text-gray-900"
+                        done ? "text-gray-400" : "text-gray-100"
                       }`}
                     >
                       {task.name}
                     </span>
                   </span>
                   {done ? (
-                    <span className="shrink-0 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 ring-1 ring-gray-200">
+                    <span className="shrink-0 rounded-full bg-[#232327] px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-gray-400 ring-1 ring-[#34343c]">
                       Wykonane
                       {formatTime(info?.completedAt)
                         ? `, ${formatTime(info?.completedAt)}`
                         : ""}
                     </span>
                   ) : (
-                    <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200">
+                    <span className="shrink-0 rounded-full bg-emerald-950/40 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-400 ring-1 ring-emerald-800/60">
                       Aktywne
                     </span>
                   )}
@@ -213,13 +213,13 @@ export default function PublicTasksList({
                       {info?.performers?.map((name) => (
                         <span
                           key={name}
-                          className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200"
+                          className="rounded-full bg-[#1a1a1e] px-2 py-0.5 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
                         >
                           {name}
                         </span>
                       ))}
                       {info?.note && (
-                        <p className="text-sm text-gray-500">{info.note}</p>
+                        <p className="text-sm text-gray-400">{info.note}</p>
                       )}
                     </div>
                     {info?.photoUrl && (
@@ -236,7 +236,7 @@ export default function PublicTasksList({
         <Modal title={active.name} onClose={closeAll}>
           <form onSubmit={goToPin} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-200">
                 Pracownik
               </label>
               {employeeIds.map((id, i) => (
@@ -248,7 +248,7 @@ export default function PublicTasksList({
                         prev.map((v, idx) => (idx === i ? e.target.value : v)),
                       )
                     }
-                    className="flex-1 rounded-[4px] border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                    className="flex-1 rounded-[4px] border border-[#34343c] bg-[#1a1a1e] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
                   >
                     <option value="">
                       {i === 0 ? "Wybierz pracownika…" : "Dodatkowy pracownik…"}
@@ -268,7 +268,7 @@ export default function PublicTasksList({
                         )
                       }
                       aria-label="Usuń pracownika"
-                      className="shrink-0 rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600"
+                      className="shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-red-400"
                     >
                       ×
                     </button>
@@ -279,7 +279,7 @@ export default function PublicTasksList({
                 <button
                   type="button"
                   onClick={() => setEmployeeIds((prev) => [...prev, ""])}
-                  className="self-start rounded-[4px] border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="self-start rounded-[4px] border border-[#34343c] px-3 py-1.5 text-sm font-medium text-gray-200 hover:bg-[#232327]"
                 >
                   + Dodaj pracownika
                 </button>
@@ -287,20 +287,20 @@ export default function PublicTasksList({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-200">
                 Notatka (opcjonalnie)
               </label>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={3}
-                className="resize-none rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                className="resize-none rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
               />
             </div>
 
             {active.requiresPhoto && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-gray-200">
                   Zdjęcie (wymagane)
                 </label>
                 <input
@@ -315,25 +315,25 @@ export default function PublicTasksList({
                   <img
                     src={photo}
                     alt="Podgląd"
-                    className="mt-1 h-32 w-32 rounded-[4px] border border-gray-200 object-cover"
+                    className="mt-1 h-32 w-32 rounded-[4px] border border-[#26262b] object-cover"
                   />
                 )}
               </div>
             )}
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-red-400">{error}</p>}
 
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={closeAll}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
               >
                 Anuluj
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
               >
                 Zapisz
               </button>
@@ -346,8 +346,8 @@ export default function PublicTasksList({
         <Modal title="Wprowadź PIN" onClose={closeAll}>
           <form onSubmit={confirmPin} className="flex flex-col gap-4">
             {primaryName && (
-              <p className="text-sm text-gray-500">
-                PIN pracownika: <span className="font-medium text-gray-900">{primaryName}</span>
+              <p className="text-sm text-gray-400">
+                PIN pracownika: <span className="font-medium text-gray-100">{primaryName}</span>
               </p>
             )}
             <input
@@ -359,10 +359,10 @@ export default function PublicTasksList({
                 setPin(e.target.value.replace(/\D/g, "").slice(0, 4))
               }
               placeholder="••••"
-              className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-center text-lg tracking-[0.5em] outline-none focus:border-gray-900"
+              className="rounded-[4px] border border-[#34343c] px-3 py-2.5 text-center text-lg tracking-[0.5em] outline-none focus:border-gray-400"
             />
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-red-400">{error}</p>}
 
             <div className="flex justify-end gap-2">
               <button
@@ -371,14 +371,14 @@ export default function PublicTasksList({
                   setPinStep(false);
                   setError(null);
                 }}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
               >
                 Wstecz
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42] disabled:opacity-50"
               >
                 {loading ? "..." : "Potwierdź"}
               </button>

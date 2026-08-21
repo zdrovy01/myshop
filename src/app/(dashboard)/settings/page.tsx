@@ -40,20 +40,20 @@ function ChevronRight() {
 export default function SettingsPage() {
   return (
     <div className="py-8">
-      <h1 className="mb-6 text-2xl font-semibold text-gray-900">Ustawienia</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-gray-100">Ustawienia</h1>
 
-      <ul className="flex flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200">
+      <ul className="flex flex-col divide-y divide-[#26262b] overflow-hidden rounded-lg border border-[#26262b]">
         {options.map((opt) => (
           <li key={opt.href}>
             <Link
               href={opt.href}
-              className="flex items-center justify-between px-4 py-4 transition-colors hover:bg-gray-50"
+              className="flex items-center justify-between px-4 py-4 transition-colors hover:bg-[#232327]"
             >
               <span className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-medium text-gray-100">
                   {opt.label}
                 </span>
-                <span className="text-xs text-gray-500">{opt.description}</span>
+                <span className="text-xs text-gray-400">{opt.description}</span>
               </span>
               <ChevronRight />
             </Link>

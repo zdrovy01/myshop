@@ -43,21 +43,21 @@ export default async function QrCodePage() {
 
       <div className="flex max-w-sm flex-col gap-5">
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-gray-700">Klucz (ID)</span>
-          <code className="break-all rounded-[4px] border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-800">
+          <span className="text-sm font-medium text-gray-200">Klucz (ID)</span>
+          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#232327] px-3 py-2 text-sm text-gray-100">
             {token}
           </code>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-gray-700">Link</span>
-          <code className="break-all rounded-[4px] border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-600">
+          <span className="text-sm font-medium text-gray-200">Link</span>
+          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#232327] px-3 py-2 text-xs text-gray-300">
             {url}
           </code>
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium text-gray-700">Kod QR</span>
+          <span className="text-sm font-medium text-gray-200">Kod QR</span>
           <div className="flex items-start gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -65,7 +65,7 @@ export default async function QrCodePage() {
               alt="Kod QR listy zadań"
               width={240}
               height={240}
-              className="rounded-lg border border-gray-200"
+              className="rounded-lg border border-[#26262b]"
             />
             <DownloadPdfButton qrDataUrl={qrPrintDataUrl} />
           </div>

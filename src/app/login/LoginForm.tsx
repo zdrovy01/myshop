@@ -39,14 +39,14 @@ export default function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-2xl font-semibold text-gray-900">
+        <h1 className="mb-1 text-2xl font-semibold text-gray-100">
           {mode === "login" ? "Zaloguj się" : "Utwórz konto"}
         </h1>
-        <p className="mb-6 text-sm text-gray-500">MyShop by zdrovy</p>
+        <p className="mb-6 text-sm text-gray-400">MyShop by zdrovy</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="phone" className="text-sm font-medium text-gray-700">
+            <label htmlFor="phone" className="text-sm font-medium text-gray-200">
               Numer telefonu
             </label>
             <input
@@ -58,14 +58,14 @@ export default function LoginForm() {
               placeholder="+48123456789"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              className="rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-gray-200"
             >
               Hasło
             </label>
@@ -79,16 +79,16 @@ export default function LoginForm() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              className="rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 rounded-[4px] bg-gray-900 px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+            className="mt-2 rounded-[4px] bg-[#2f2f37] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] disabled:opacity-50"
           >
             {loading
               ? "..."
@@ -104,7 +104,7 @@ export default function LoginForm() {
             setMode(mode === "login" ? "register" : "login");
             setError(null);
           }}
-          className="mt-4 text-sm text-gray-500 hover:text-gray-900"
+          className="mt-4 text-sm text-gray-400 hover:text-gray-100"
         >
           {mode === "login"
             ? "Nie masz konta? Zarejestruj się"

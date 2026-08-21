@@ -12,7 +12,7 @@ export default function BackHeader({
       <Link
         href={href}
         aria-label="Wstecz"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-900 text-white transition-colors hover:bg-gray-800"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2f2f37] text-white transition-colors hover:bg-[#3a3a42]"
       >
         <svg
           width="18"
@@ -28,7 +28,7 @@ export default function BackHeader({
           <path d="M15 18l-6-6 6-6" />
         </svg>
       </Link>
-      <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
+      <h1 className="text-2xl font-semibold text-gray-100">{title}</h1>
     </div>
   );
 }

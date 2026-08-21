@@ -175,12 +175,12 @@ export default function TasksList({
   return (
     <>
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">Lista zadań</h1>
+        <h1 className="text-2xl font-semibold text-gray-100">Lista zadań</h1>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="flex items-center gap-2 whitespace-nowrap rounded-[4px] border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex items-center gap-2 whitespace-nowrap rounded-[4px] border border-[#34343c] px-3 py-2 text-sm font-medium text-gray-200 transition-colors hover:bg-[#232327]"
           >
             <svg
               width="16"
@@ -206,8 +206,8 @@ export default function TasksList({
                 aria-pressed={editMode}
                 className={`whitespace-nowrap rounded-[4px] px-3 py-2 text-sm font-medium text-white transition-colors ${
                   editMode
-                    ? "bg-gray-600 hover:bg-gray-700"
-                    : "bg-gray-900 hover:bg-gray-800"
+                    ? "bg-[#3a3a42] hover:bg-[#3a3a42]"
+                    : "bg-[#2f2f37] hover:bg-[#3a3a42]"
                 }`}
               >
                 {editMode ? "Zapisz" : "Edytuj"}
@@ -215,7 +215,7 @@ export default function TasksList({
               <button
                 type="button"
                 onClick={openAdd}
-                className="ml-auto whitespace-nowrap rounded-[4px] bg-gray-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 md:ml-0"
+                className="ml-auto whitespace-nowrap rounded-[4px] bg-[#2f2f37] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] md:ml-0"
               >
                 Dodaj zadanie
               </button>
@@ -251,20 +251,20 @@ export default function TasksList({
               placeholder={
                 "Nazwa zadania\n\nAby dodać kilka, oddziel “-”, np.:\n-Kawomat\n-Rozmrozić parówki"
               }
-              className="resize-none rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+              className="resize-none rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
             />
 
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setAddOpen(false)}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
               >
                 Anuluj
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
               >
                 Dodaj
               </button>
@@ -273,7 +273,7 @@ export default function TasksList({
         </Modal>
       )}
 
-      <ul className="-mx-4 flex flex-col divide-y divide-gray-200 md:-mx-8">
+      <ul className="-mx-4 flex flex-col divide-y divide-[#26262b] md:-mx-8">
         {(editMode
           ? tasks.map((task, index) => ({ task, index }))
           : tasks
@@ -286,8 +286,8 @@ export default function TasksList({
         ).map(({ task, index }, displayIndex) => {
           const rowClass =
             task.priority === 1
-              ? "bg-rose-100 hover:bg-rose-200/70"
-              : "bg-white hover:bg-gray-50";
+              ? "bg-rose-950/40 hover:bg-rose-950/60"
+              : "bg-[#1a1a1e] hover:bg-[#232327]";
 
           return (
             <li
@@ -314,7 +314,7 @@ export default function TasksList({
               }`}
             >
               <div className="flex items-center justify-between gap-2">
-              <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-900">
+              <span className="flex min-w-0 flex-1 items-center gap-3 text-base font-medium text-gray-100">
                 {editMode ? (
                   <span
                     draggable
@@ -339,7 +339,7 @@ export default function TasksList({
                     value={task.name}
                     onChange={(e) => updateTask(index, { name: e.target.value })}
                     aria-label="Nazwa zadania"
-                    className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-900 outline-none focus:border-gray-900"
+                    className="w-full min-w-0 border-b border-gray-400 bg-transparent pb-0.5 text-base font-medium text-gray-100 outline-none focus:border-gray-400"
                   />
                 ) : (
                   <span className="truncate first-letter:uppercase">
@@ -358,13 +358,13 @@ export default function TasksList({
                         : ""}
                     </span>
                   ) : (
-                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-emerald-600">
+                    <span className="shrink-0 text-xs font-medium uppercase tracking-wide text-emerald-400">
                       Aktywne
                     </span>
                   ))}
                 {editMode && (
                   <>
-                    <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-600">
+                    <label className="flex cursor-pointer items-center gap-1.5 text-xs text-gray-300">
                       <span>Foto</span>
                       <button
                         type="button"
@@ -376,11 +376,11 @@ export default function TasksList({
                           })
                         }
                         className={`relative h-5 w-9 rounded-full transition-colors ${
-                          task.requiresPhoto ? "bg-gray-900" : "bg-gray-300"
+                          task.requiresPhoto ? "bg-[#2f2f37]" : "bg-gray-300"
                         }`}
                       >
                         <span
-                          className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                          className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-[#1a1a1e] transition-transform ${
                             task.requiresPhoto
                               ? "translate-x-[18px]"
                               : "translate-x-0.5"
@@ -397,7 +397,7 @@ export default function TasksList({
                         })
                       }
                       aria-label="Priorytet"
-                      className="rounded-[4px] border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 outline-none focus:border-gray-900"
+                      className="rounded-[4px] border border-[#34343c] bg-[#1a1a1e] px-2 py-1 text-xs text-gray-200 outline-none focus:border-gray-400"
                     >
                       <option value={1}>Priorytet 1</option>
                       <option value={2}>Priorytet 2</option>
@@ -413,7 +413,7 @@ export default function TasksList({
                     }
                     aria-label="Opcje"
                     title="Opcje"
-                    className="rounded-[4px] p-2 text-gray-500 transition-colors hover:bg-white hover:text-gray-900"
+                    className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#1a1a1e] hover:text-gray-100"
                   >
                     <DotsIcon />
                   </button>
@@ -427,11 +427,11 @@ export default function TasksList({
                         onClick={() => setOpenIndex(null)}
                         className="fixed inset-0 z-10 cursor-default"
                       />
-                      <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-gray-200 bg-white shadow-lg">
+                      <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
                         <button
                           type="button"
                           onClick={() => handleDelete(index)}
-                          className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50"
+                          className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
                         >
                           Usuń
                         </button>
@@ -448,13 +448,13 @@ export default function TasksList({
                     {completions[task.id]?.performers?.map((name) => (
                       <span
                         key={name}
-                        className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300"
+                        className="rounded-full bg-[#26262b] px-2 py-0.5 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
                       >
                         {name}
                       </span>
                     ))}
                     {completions[task.id]?.note && (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-300">
                         {completions[task.id].note}
                       </p>
                     )}

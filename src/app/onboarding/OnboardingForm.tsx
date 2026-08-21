@@ -5,8 +5,8 @@ import { useState } from "react";
 import { saveOnboarding } from "./actions";
 
 const fieldClass =
-  "rounded-[4px] border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-gray-900";
-const labelClass = "text-sm font-medium text-gray-700";
+  "rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400";
+const labelClass = "text-sm font-medium text-gray-200";
 
 export default function OnboardingForm() {
   const router = useRouter();
@@ -48,10 +48,10 @@ export default function OnboardingForm() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-2xl font-semibold text-gray-900">
+        <h1 className="mb-1 text-2xl font-semibold text-gray-100">
           Uzupełnij dane
         </h1>
-        <p className="mb-6 text-sm text-gray-500">
+        <p className="mb-6 text-sm text-gray-400">
           Potrzebujemy jeszcze kilku informacji.
         </p>
 
@@ -107,7 +107,7 @@ export default function OnboardingForm() {
               onChange={(e) =>
                 setShopType(e.target.value as "zabka" | "other")
               }
-              className={`${fieldClass} bg-white`}
+              className={`${fieldClass} bg-[#1a1a1e]`}
             >
               <option value="zabka">Żabka</option>
               <option value="other">Inny sklep</option>
@@ -142,12 +142,12 @@ export default function OnboardingForm() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-400">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 rounded-[4px] bg-gray-900 px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
+            className="mt-2 rounded-[4px] bg-[#2f2f37] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] disabled:opacity-50"
           >
             {loading ? "..." : "Zapisz i kontynuuj"}
           </button>
