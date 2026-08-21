@@ -4,7 +4,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export type CompleteInput = {
   taskId: string;
-  employeeId: string;
+  employeeId: string; // головний виконавець (вводить PIN)
+  helperIds?: string[]; // додаткові виконавці
   pin: string;
   note: string;
   photoBase64: string | null; // data URL
@@ -57,9 +58,24 @@ export async function completeTask(
     }
   }
 
+  // Додаткові виконавці — лише ті, що належать тому ж власнику.
+  const helperIds = [...new Set(input.helperIds ?? [])].filter(
+    (id) => id && id !== input.employeeId,
+  );
+  let validHelpers: string[] = [];
+  if (helperIds.length) {
+    const { data: emps } = await supabase
+      .from("employees")
+      .select("id")
+      .eq("user_id", task.user_id)
+      .in("id", helperIds);
+    validHelpers = (emps ?? []).map((e) => e.id as string);
+  }
+
   const { error } = await supabase.from("task_completions").insert({
     task_id: input.taskId,
     employee_id: input.employeeId,
+    helper_ids: validHelpers,
     note: input.note.trim() || null,
     photo_url: photoUrl,
   });

@@ -50,7 +50,7 @@ function GripIcon() {
 }
 
 type Completion = {
-  employeeName: string | null;
+  performers: string[];
   note: string | null;
   photoUrl: string | null;
   completedAt?: string | null;
@@ -445,11 +445,14 @@ export default function TasksList({
               {!editMode && completed.has(task.id) && (
                 <div className="mt-2 flex flex-col items-start gap-2 pl-7">
                   <div className="flex flex-wrap items-center gap-2">
-                    {completions[task.id]?.employeeName && (
-                      <span className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300">
-                        {completions[task.id].employeeName}
+                    {completions[task.id]?.performers?.map((name) => (
+                      <span
+                        key={name}
+                        className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-300"
+                      >
+                        {name}
                       </span>
-                    )}
+                    ))}
                     {completions[task.id]?.note && (
                       <p className="text-sm text-gray-600">
                         {completions[task.id].note}

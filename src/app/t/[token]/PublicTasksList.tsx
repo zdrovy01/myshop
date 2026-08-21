@@ -41,7 +41,7 @@ function fileToDataUrl(file: File): Promise<string> {
 }
 
 type Completion = {
-  employeeName: string | null;
+  performers: string[]; // імена всіх виконавців
   note: string | null;
   photoUrl: string | null;
   completedAt?: string | null;
@@ -71,7 +71,8 @@ export default function PublicTasksList({
   );
   const [active, setActive] = useState<PublicTask | null>(null);
   const [pinStep, setPinStep] = useState(false);
-  const [employeeId, setEmployeeId] = useState("");
+  // Перший — головний виконавець (вводить PIN), далі — додаткові.
+  const [employeeIds, setEmployeeIds] = useState<string[]>([""]);
   const [note, setNote] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [pin, setPin] = useState("");
@@ -84,11 +85,17 @@ export default function PublicTasksList({
   function openComplete(task: PublicTask) {
     setActive(task);
     setPinStep(false);
-    setEmployeeId("");
+    setEmployeeIds([""]);
     setNote("");
     setPhoto(null);
     setPin("");
     setError(null);
+  }
+
+  // Працівники, ще не вибрані в інших рядках (щоб не дублювались).
+  function availableFor(index: number) {
+    const taken = new Set(employeeIds.filter((_, i) => i !== index));
+    return employees.filter((e) => !taken.has(e.id));
   }
 
   function closeAll() {
@@ -99,7 +106,7 @@ export default function PublicTasksList({
   function goToPin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!employeeId) {
+    if (!employeeIds[0]) {
       setError("Wybierz pracownika.");
       return;
     }
@@ -116,9 +123,11 @@ export default function PublicTasksList({
     if (!active) return;
     setError(null);
     setLoading(true);
+    const chosen = employeeIds.filter(Boolean);
     const result = await completeTask({
       taskId: active.id,
-      employeeId,
+      employeeId: chosen[0],
+      helperIds: chosen.slice(1),
       pin,
       note,
       photoBase64: photo,
@@ -128,10 +137,13 @@ export default function PublicTasksList({
       setError(result.error);
       return;
     }
+    const performers = chosen
+      .map((id) => employees.find((e) => e.id === id)?.name)
+      .filter((n): n is string => Boolean(n));
     setDetails((prev) => ({
       ...prev,
       [active.id]: {
-        employeeName: employees.find((e) => e.id === employeeId)?.name ?? null,
+        performers,
         note: note.trim() || null,
         photoUrl: photo,
         completedAt: new Date().toISOString(),
@@ -140,6 +152,9 @@ export default function PublicTasksList({
     setDoneIds((prev) => new Set(prev).add(active.id));
     closeAll();
   }
+
+  const primaryName =
+    employees.find((e) => e.id === employeeIds[0])?.name ?? "";
 
   async function onPhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -195,11 +210,14 @@ export default function PublicTasksList({
                 {done && (
                   <div className="mt-2 flex flex-col items-start gap-2 pl-7">
                     <div className="flex flex-wrap items-center gap-2">
-                      {info?.employeeName && (
-                        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
-                          {info.employeeName}
+                      {info?.performers?.map((name) => (
+                        <span
+                          key={name}
+                          className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-200"
+                        >
+                          {name}
                         </span>
-                      )}
+                      ))}
                       {info?.note && (
                         <p className="text-sm text-gray-500">{info.note}</p>
                       )}
@@ -221,18 +239,51 @@ export default function PublicTasksList({
               <label className="text-sm font-medium text-gray-700">
                 Pracownik
               </label>
-              <select
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
-                className="rounded-[4px] border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
-              >
-                <option value="">Wybierz pracownika…</option>
-                {employees.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.name}
-                  </option>
-                ))}
-              </select>
+              {employeeIds.map((id, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <select
+                    value={id}
+                    onChange={(e) =>
+                      setEmployeeIds((prev) =>
+                        prev.map((v, idx) => (idx === i ? e.target.value : v)),
+                      )
+                    }
+                    className="flex-1 rounded-[4px] border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-gray-900"
+                  >
+                    <option value="">
+                      {i === 0 ? "Wybierz pracownika…" : "Dodatkowy pracownik…"}
+                    </option>
+                    {availableFor(i).map((emp) => (
+                      <option key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </option>
+                    ))}
+                  </select>
+                  {i > 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEmployeeIds((prev) =>
+                          prev.filter((_, idx) => idx !== i),
+                        )
+                      }
+                      aria-label="Usuń pracownika"
+                      className="shrink-0 rounded-[4px] p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+              {employeeIds.length < employees.length && (
+                <button
+                  type="button"
+                  onClick={() => setEmployeeIds((prev) => [...prev, ""])}
+                  className="self-start rounded-[4px] border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  + Dodaj pracownika
+                </button>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -294,6 +345,11 @@ export default function PublicTasksList({
       {active && pinStep && (
         <Modal title="Wprowadź PIN" onClose={closeAll}>
           <form onSubmit={confirmPin} className="flex flex-col gap-4">
+            {primaryName && (
+              <p className="text-sm text-gray-500">
+                PIN pracownika: <span className="font-medium text-gray-900">{primaryName}</span>
+              </p>
+            )}
             <input
               autoFocus
               inputMode="numeric"

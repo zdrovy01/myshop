@@ -52,11 +52,19 @@ export default async function ListaZadanPage({
     requiresPhoto: t.requires_photo,
   }));
 
+  const { data: employeeRows } = await supabase
+    .from("employees")
+    .select("id, name")
+    .eq("user_id", userId);
+  const nameById = new Map(
+    (employeeRows ?? []).map((e) => [e.id as string, e.name as string]),
+  );
+
   const taskIds = tasks.map((t) => t.id);
   const { data: completionRows } = taskIds.length
     ? await supabase
         .from("task_completions")
-        .select("task_id, note, photo_url, completed_at, employee:employees(name)")
+        .select("task_id, employee_id, helper_ids, note, photo_url, completed_at")
         .in("task_id", taskIds)
         .order("completed_at", { ascending: false })
     : { data: [] };
@@ -68,7 +76,7 @@ export default async function ListaZadanPage({
   const completions: Record<
     string,
     {
-      employeeName: string | null;
+      performers: string[];
       note: string | null;
       photoUrl: string | null;
       completedAt: string | null;
@@ -76,15 +84,18 @@ export default async function ListaZadanPage({
   > = {};
   for (const r of (completionRows ?? []) as Array<{
     task_id: string;
+    employee_id: string | null;
+    helper_ids: string[] | null;
     note: string | null;
     photo_url: string | null;
     completed_at: string | null;
-    employee: { name: string | null } | { name: string | null }[] | null;
   }>) {
     if (completions[r.task_id]) continue;
-    const emp = Array.isArray(r.employee) ? r.employee[0] : r.employee;
+    const performers = [r.employee_id, ...(r.helper_ids ?? [])]
+      .map((id) => (id ? nameById.get(id) : undefined))
+      .filter((n): n is string => Boolean(n));
     completions[r.task_id] = {
-      employeeName: emp?.name ?? null,
+      performers,
       note: r.note,
       photoUrl: r.photo_url,
       completedAt: r.completed_at,
