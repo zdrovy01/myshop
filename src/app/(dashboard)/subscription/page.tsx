@@ -90,9 +90,12 @@ export default async function SubscriptionPage() {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("users")
-    .select("created_at")
+    .select("created_at, subscribed")
     .eq("id", userId)
     .maybeSingle();
+
+  const subscribed = Boolean(data?.subscribed);
+  const planName = subscribed ? "MyShop" : "MyShop trial";
 
   // Пробний період — 1 місяць від реєстрації.
   const created = data?.created_at ? new Date(data.created_at) : new Date();
@@ -118,12 +121,14 @@ export default async function SubscriptionPage() {
         </p>
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <p className="text-3xl font-bold text-gray-100">MyShop trial</p>
+            <p className="text-3xl font-bold text-gray-100">{planName}</p>
             <p className="mt-1 text-lg text-gray-200">
               99 zł <span className="text-sm text-gray-400">/ miesiąc</span>
             </p>
             <p className="mt-1 text-sm text-gray-400">
-              Pierwszy miesiąc gratis · do {trialEndLabel}
+              {subscribed
+                ? "Subskrypcja aktywna"
+                : `Pierwszy miesiąc gratis · do ${trialEndLabel}`}
             </p>
           </div>
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#232327]">

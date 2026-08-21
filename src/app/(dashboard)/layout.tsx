@@ -1,6 +1,21 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
+import { getSessionUserId } from "@/lib/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/user";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const userId = await getSessionUserId();
+  if (!userId) return { title: "MyShop trial" };
+  const supabase = createAdminClient();
+  const { data } = await supabase
+    .from("users")
+    .select("subscribed")
+    .eq("id", userId)
+    .maybeSingle();
+  return { title: data?.subscribed ? "MyShop" : "MyShop trial" };
+}
 
 export default async function DashboardLayout({
   children,
