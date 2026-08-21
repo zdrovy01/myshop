@@ -89,7 +89,7 @@ function Avatar({ name }: { name: string }) {
 
 function PriorityTag() {
   return (
-    <span className="rounded-full bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-400 ring-1 ring-rose-500/30">
+    <span className="rounded-full bg-rose-500/15 px-2.5 py-1 text-xs font-semibold text-rose-400">
       Priorytet 1
     </span>
   );
@@ -97,7 +97,7 @@ function PriorityTag() {
 
 function FotoTag() {
   return (
-    <span className="flex items-center gap-1 rounded-full bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-300 ring-1 ring-sky-500/30">
+    <span className="flex items-center gap-1 rounded-full bg-sky-500/15 px-2.5 py-1 text-xs font-semibold text-sky-300">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
         <circle cx="12" cy="13" r="4" />
@@ -490,7 +490,7 @@ export default function TasksList({
                     {task.priority === 1 && <PriorityTag />}
                     {task.requiresPhoto && <FotoTag />}
                     {!done && (
-                      <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400 ring-1 ring-emerald-500/30">
+                      <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400">
                         Aktywne
                       </span>
                     )}
@@ -498,7 +498,7 @@ export default function TasksList({
                       info?.performers?.map((name) => (
                         <span
                           key={name}
-                          className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300 ring-1 ring-[#34343c]"
+                          className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300"
                         >
                           {name}
                         </span>
