@@ -95,7 +95,7 @@ export default async function SubscriptionPage() {
     .maybeSingle();
 
   const subscribed = Boolean(data?.subscribed);
-  const planName = subscribed ? "MyShop" : "MyShop trial";
+  const planName = "MyShop";
 
   // Пробний період — 1 місяць від реєстрації.
   const created = data?.created_at ? new Date(data.created_at) : new Date();
