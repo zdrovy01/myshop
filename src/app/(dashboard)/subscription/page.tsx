@@ -93,7 +93,7 @@ export default async function SubscriptionPage() {
       {/* План */}
       <div className="mt-4 rounded-xl border border-[#26262b] bg-[#161619] p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-100">MyShop Pro</h2>
+          <h2 className="text-lg font-semibold text-gray-100">MyShop trial</h2>
           <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400">
             1. miesiąc gratis
           </span>

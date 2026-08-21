@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MyShop by zdrovy",
+  title: "MyShop trial",
   description: "Додаток для магазинів Żabka — MyShop by zdrovy",
 };
 
