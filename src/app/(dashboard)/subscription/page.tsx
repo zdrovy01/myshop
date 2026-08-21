@@ -122,14 +122,23 @@ export default async function SubscriptionPage() {
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
             <p className="text-3xl font-bold text-gray-100">{planName}</p>
-            <p className="mt-1 text-lg text-gray-200">
-              99 zł <span className="text-sm text-gray-400">/ miesiąc</span>
-            </p>
-            <p className="mt-1 text-sm text-gray-400">
-              {subscribed
-                ? "Subskrypcja aktywna"
-                : `Pierwszy miesiąc gratis · do ${trialEndLabel}`}
-            </p>
+            {subscribed ? (
+              <>
+                <p className="mt-1 text-lg text-gray-200">
+                  99 zł <span className="text-sm text-gray-400">/ miesiąc</span>
+                </p>
+                <p className="mt-1 text-sm text-gray-400">Subskrypcja aktywna</p>
+              </>
+            ) : (
+              <>
+                <p className="mt-1 text-lg font-medium text-emerald-400">
+                  Za darmo
+                </p>
+                <p className="mt-1 text-sm text-gray-400">
+                  Okres próbny do {trialEndLabel}, potem 99 zł / miesiąc
+                </p>
+              </>
+            )}
           </div>
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-[#232327]">
             <Image
