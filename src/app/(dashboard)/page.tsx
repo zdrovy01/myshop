@@ -105,6 +105,7 @@ export default async function ListaZadanPage({
   return (
     <div className="py-8">
       <TasksList
+        key={selectedDate}
         initial={tasks}
         completedIds={completedIds}
         completions={completions}
