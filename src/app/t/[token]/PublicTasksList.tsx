@@ -294,7 +294,7 @@ export default function PublicTasksList({
         <button
           type="button"
           onClick={openAdd}
-          className="shrink-0 rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+          className="shrink-0 rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42]"
         >
           Dodaj
         </button>
@@ -581,7 +581,7 @@ export default function PublicTasksList({
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
               >
                 Dodaj
               </button>
@@ -629,7 +629,7 @@ export default function PublicTasksList({
               <button
                 type="submit"
                 disabled={addLoading}
-                className="rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42] disabled:opacity-50"
               >
                 {addLoading ? "..." : "Potwierdź"}
               </button>
