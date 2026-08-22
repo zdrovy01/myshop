@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import PhotoThumb from "@/components/PhotoThumb";
-import { completeTask } from "./actions";
+import { addDoneTask, completeTask } from "./actions";
 
 export type PublicTask = {
   id: string;
@@ -107,16 +107,19 @@ function NameTag({ name }: { name: string }) {
 }
 
 export default function PublicTasksList({
+  token,
   tasks,
   employees,
   completedIds = [],
   completions = {},
 }: {
+  token: string;
   tasks: PublicTask[];
   employees: PublicEmployee[];
   completedIds?: string[];
   completions?: Record<string, Completion>;
 }) {
+  const [items, setItems] = useState<PublicTask[]>(tasks);
   const [details, setDetails] = useState<Record<string, Completion>>(
     () => ({ ...completions }),
   );
@@ -132,6 +135,77 @@ export default function PublicTasksList({
   const [doneIds, setDoneIds] = useState<Set<string>>(
     () => new Set(completedIds),
   );
+
+  // Додати виконане поза списком.
+  const [addOpen, setAddOpen] = useState(false);
+  const [addPinStep, setAddPinStep] = useState(false);
+  const [addDesc, setAddDesc] = useState("");
+  const [addEmployeeId, setAddEmployeeId] = useState("");
+  const [addPin, setAddPin] = useState("");
+  const [addError, setAddError] = useState<string | null>(null);
+  const [addLoading, setAddLoading] = useState(false);
+
+  function openAdd() {
+    setAddOpen(true);
+    setAddPinStep(false);
+    setAddDesc("");
+    setAddEmployeeId("");
+    setAddPin("");
+    setAddError(null);
+  }
+
+  function addToPin(e: React.FormEvent) {
+    e.preventDefault();
+    setAddError(null);
+    if (!addDesc.trim()) {
+      setAddError("Wpisz, co zostało zrobione.");
+      return;
+    }
+    if (!addEmployeeId) {
+      setAddError("Wybierz pracownika.");
+      return;
+    }
+    setAddPin("");
+    setAddPinStep(true);
+  }
+
+  async function confirmAddPin(e: React.FormEvent) {
+    e.preventDefault();
+    setAddError(null);
+    setAddLoading(true);
+    const result = await addDoneTask({
+      token,
+      employeeId: addEmployeeId,
+      pin: addPin,
+      description: addDesc,
+    });
+    setAddLoading(false);
+    if ("error" in result) {
+      setAddError(result.error);
+      return;
+    }
+    const newTask: PublicTask = {
+      id: result.taskId,
+      name: addDesc.trim(),
+      priority: 2,
+      requiresPhoto: false,
+    };
+    setItems((prev) => [...prev, newTask]);
+    setDetails((prev) => ({
+      ...prev,
+      [result.taskId]: {
+        performers: [result.employeeName],
+        note: null,
+        photoUrl: null,
+        completedAt: result.completedAt,
+      },
+    }));
+    setDoneIds((prev) => new Set(prev).add(result.taskId));
+    setAddOpen(false);
+  }
+
+  const addPrimaryName =
+    employees.find((e) => e.id === addEmployeeId)?.name ?? "";
 
   function openComplete(task: PublicTask) {
     setActive(task);
@@ -215,8 +289,23 @@ export default function PublicTasksList({
 
   return (
     <>
+      <div className="mb-5 flex items-center justify-between gap-3 sm:mb-6">
+        <h1 className="text-2xl font-semibold text-gray-100">Lista zadań</h1>
+        <button
+          type="button"
+          onClick={openAdd}
+          className="shrink-0 rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+        >
+          Dodaj
+        </button>
+      </div>
+
+      {items.length === 0 && (
+        <p className="text-sm text-gray-400">Brak zadań.</p>
+      )}
+
       <ul className="flex flex-col gap-3">
-        {[...tasks]
+        {[...items]
           .sort(
             (a, b) => Number(doneIds.has(a.id)) - Number(doneIds.has(b.id)),
           )
@@ -440,6 +529,109 @@ export default function PublicTasksList({
                 className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42] disabled:opacity-50"
               >
                 {loading ? "..." : "Potwierdź"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Додати виконане поза списком */}
+      {addOpen && !addPinStep && (
+        <Modal title="Co zostało zrobione?" onClose={() => setAddOpen(false)}>
+          <form onSubmit={addToPin} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-gray-200">Opis</label>
+              <textarea
+                autoFocus
+                value={addDesc}
+                onChange={(e) => setAddDesc(e.target.value)}
+                rows={3}
+                placeholder="Np. Umyłem podłogę na zapleczu"
+                className="resize-none rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-gray-200">
+                Pracownik
+              </label>
+              <select
+                value={addEmployeeId}
+                onChange={(e) => setAddEmployeeId(e.target.value)}
+                className="rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
+              >
+                <option value="">Wybierz pracownika…</option>
+                {employees.map((emp) => (
+                  <option key={emp.id} value={emp.id}>
+                    {emp.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {addError && <p className="text-sm text-red-400">{addError}</p>}
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setAddOpen(false)}
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+              >
+                Anuluj
+              </button>
+              <button
+                type="submit"
+                className="rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              >
+                Dodaj
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {addOpen && addPinStep && (
+        <Modal title="Wprowadź PIN" onClose={() => setAddOpen(false)}>
+          <form onSubmit={confirmAddPin} className="flex flex-col gap-4">
+            {addPrimaryName && (
+              <p className="text-sm text-gray-400">
+                PIN pracownika:{" "}
+                <span className="font-medium text-gray-100">
+                  {addPrimaryName}
+                </span>
+              </p>
+            )}
+            <input
+              autoFocus
+              inputMode="numeric"
+              maxLength={4}
+              value={addPin}
+              onChange={(e) =>
+                setAddPin(e.target.value.replace(/\D/g, "").slice(0, 4))
+              }
+              placeholder="••••"
+              className="rounded-[4px] border border-[#34343c] px-3 py-2.5 text-center text-lg tracking-[0.5em] outline-none focus:border-gray-400"
+            />
+
+            {addError && <p className="text-sm text-red-400">{addError}</p>}
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setAddPinStep(false);
+                  setAddError(null);
+                }}
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+              >
+                Wstecz
+              </button>
+              <button
+                type="submit"
+                disabled={addLoading}
+                className="rounded-[4px] bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+              >
+                {addLoading ? "..." : "Potwierdź"}
               </button>
             </div>
           </form>

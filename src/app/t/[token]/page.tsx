@@ -91,20 +91,13 @@ export default async function PublicTasksPage({
   return (
     <div className="min-h-screen bg-[#0b0b0d] px-4 py-8 sm:py-10">
       <div className="mx-auto w-full max-w-2xl">
-        <h1 className="mb-5 text-2xl font-semibold text-gray-100 sm:mb-6">
-          Lista zadań
-        </h1>
-
-        {tasks.length === 0 ? (
-          <p className="text-sm text-gray-400">Brak zadań.</p>
-        ) : (
-          <PublicTasksList
-            tasks={tasks}
-            employees={employees}
-            completedIds={completedIds}
-            completions={completions}
-          />
-        )}
+        <PublicTasksList
+          token={token}
+          tasks={tasks}
+          employees={employees}
+          completedIds={completedIds}
+          completions={completions}
+        />
       </div>
     </div>
   );

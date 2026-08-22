@@ -1,6 +1,81 @@
 "use server";
 
+import { todayWarsaw } from "@/lib/date";
 import { createAdminClient } from "@/lib/supabase/admin";
+
+export type AddDoneResult =
+  | { error: string }
+  | { ok: true; taskId: string; employeeName: string; completedAt: string };
+
+// Працівник додає те, що зробив (поза списком): нове завдання + виконання.
+export async function addDoneTask(input: {
+  token: string;
+  employeeId: string;
+  pin: string;
+  description: string;
+}): Promise<AddDoneResult> {
+  const supabase = createAdminClient();
+  const description = input.description.trim();
+  if (!description) return { error: "Wpisz, co zostało zrobione." };
+
+  const { data: user } = await supabase
+    .from("users")
+    .select("id")
+    .eq("qr_token", input.token)
+    .maybeSingle();
+  if (!user) return { error: "Nieprawidłowy link." };
+
+  const { data: emp } = await supabase
+    .from("employees")
+    .select("id, name, pin, user_id")
+    .eq("id", input.employeeId)
+    .maybeSingle();
+  if (!emp || emp.user_id !== user.id) {
+    return { error: "Nieprawidłowy pracownik." };
+  }
+  if (emp.pin !== input.pin.trim()) return { error: "Nieprawidłowy PIN." };
+
+  const today = todayWarsaw();
+  const { data: last } = await supabase
+    .from("tasks")
+    .select("position")
+    .eq("user_id", user.id)
+    .eq("task_date", today)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const position = (last?.position ?? 0) + 1;
+
+  const { data: task, error: taskErr } = await supabase
+    .from("tasks")
+    .insert({
+      user_id: user.id,
+      name: description,
+      priority: 2,
+      requires_photo: false,
+      position,
+      task_date: today,
+    })
+    .select("id")
+    .single();
+  if (taskErr || !task) return { error: "Nie udało się zapisać." };
+
+  const completedAt = new Date().toISOString();
+  const { error: compErr } = await supabase.from("task_completions").insert({
+    task_id: task.id,
+    employee_id: emp.id,
+    note: null,
+    photo_url: null,
+  });
+  if (compErr) return { error: "Nie udało się zapisać." };
+
+  return {
+    ok: true,
+    taskId: task.id,
+    employeeName: emp.name,
+    completedAt,
+  };
+}
 
 export type CompleteInput = {
   taskId: string;
