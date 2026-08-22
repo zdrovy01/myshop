@@ -65,8 +65,7 @@ export default async function SubscriptionPage() {
         className="h-auto w-40 invert"
       />
 
-      <h1 className="mt-8 text-4xl font-bold text-gray-100">MyShop</h1>
-      <p className="mt-3 text-lg text-gray-400">
+      <p className="mt-6 text-lg text-gray-400">
         Wszystko, czego potrzebuje Twój sklep.
       </p>
 
