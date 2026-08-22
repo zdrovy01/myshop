@@ -50,7 +50,7 @@ export default async function SubscriptionPage() {
   }).format(trialEnd);
 
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center py-10 text-center">
+    <div className="mx-auto flex max-w-md flex-col items-center py-10 text-center md:min-h-screen md:justify-center md:py-10">
       {/* Лого замість зірочки */}
       <Image
         src="/logo.png"
