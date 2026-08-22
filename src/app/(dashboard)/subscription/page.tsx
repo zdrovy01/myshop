@@ -21,17 +21,13 @@ function Check({ plus = false }: { plus?: boolean }) {
   );
 }
 
-function Dash() {
-  return <span className="text-gray-600">—</span>;
-}
-
-const features: { label: string; free: boolean }[] = [
-  { label: "Lista zadań i wykonania", free: true },
-  { label: "Pracownicy z PIN", free: true },
-  { label: "Kod QR dla pracowników", free: true },
-  { label: "Zdjęcia i notatki wykonania", free: false },
-  { label: "Historia wykonanych zadań", free: false },
-  { label: "Priorytetowe wsparcie", free: false },
+const features: string[] = [
+  "Lista zadań i wykonania",
+  "Pracownicy z PIN",
+  "Kod QR dla pracowników",
+  "Zdjęcia i notatki wykonania",
+  "Historia wykonanych zadań",
+  "Priorytetowe wsparcie",
 ];
 
 export default async function SubscriptionPage() {
@@ -69,32 +65,20 @@ export default async function SubscriptionPage() {
         Wszystko, czego potrzebuje Twój sklep.
       </p>
 
-      {/* Таблиця порівняння */}
-      <div className="mt-8 w-full rounded-2xl border border-[#26262b] bg-[#161619] p-5">
-        <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-6 border-b border-[#26262b] pb-3 text-sm">
-          <span className="text-left font-medium text-gray-400">Funkcje</span>
-          <span className="w-14 text-center font-medium text-gray-400">
-            Darmowy
-          </span>
-          <span className="w-14 text-center font-semibold text-sky-400">
-            MyShop
-          </span>
-        </div>
-
-        {features.map((f) => (
-          <div
-            key={f.label}
-            className="grid grid-cols-[1fr_auto_auto] items-center gap-x-6 border-b border-[#26262b] py-4 last:border-0"
-          >
-            <span className="text-left text-sm text-gray-100">{f.label}</span>
-            <span className="flex w-14 justify-center">
-              {f.free ? <Check /> : <Dash />}
-            </span>
-            <span className="flex w-14 justify-center">
+      {/* Що дає підписка */}
+      <div className="mt-8 w-full rounded-2xl border border-[#26262b] bg-[#161619] p-5 text-left">
+        <p className="text-sm text-gray-300">
+          Przez pierwszy miesiąc masz wszystko za darmo. Wykup subskrypcję, aby
+          po okresie próbnym dalej korzystać ze wszystkich funkcji:
+        </p>
+        <ul className="mt-4 flex flex-col gap-3">
+          {features.map((f) => (
+            <li key={f} className="flex items-center gap-3">
               <Check plus />
-            </span>
-          </div>
-        ))}
+              <span className="text-sm text-gray-100">{f}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Кнопка / статус */}
