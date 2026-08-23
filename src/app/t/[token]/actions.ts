@@ -158,3 +158,97 @@ export async function completeTask(
 
   return { ok: true };
 }
+
+export type UpdateResult =
+  | { error: string }
+  | { ok: true; performers: string[]; note: string | null; photoUrl: string | null };
+
+// Редагування вже виконаного завдання (працівники, нотатка, фото).
+export async function updateCompletion(input: {
+  token: string;
+  taskId: string;
+  employeeId: string; // головний (вводить PIN)
+  helperIds?: string[];
+  pin: string;
+  note: string;
+  photoBase64: string | null; // нове фото (data URL) або null = без змін
+}): Promise<UpdateResult> {
+  const supabase = createAdminClient();
+
+  const { data: user } = await supabase
+    .from("users")
+    .select("id")
+    .eq("qr_token", input.token)
+    .maybeSingle();
+  if (!user) return { error: "Nieprawidłowy link." };
+
+  const { data: emp } = await supabase
+    .from("employees")
+    .select("id, name, pin, user_id")
+    .eq("id", input.employeeId)
+    .maybeSingle();
+  if (!emp || emp.user_id !== user.id) {
+    return { error: "Nieprawidłowy pracownik." };
+  }
+  if (emp.pin !== input.pin.trim()) return { error: "Nieprawidłowy PIN." };
+
+  // Найновіше виконання цього завдання.
+  const { data: comp } = await supabase
+    .from("task_completions")
+    .select("id, photo_url")
+    .eq("task_id", input.taskId)
+    .order("completed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!comp) return { error: "Nie znaleziono wykonania." };
+
+  // Нове фото (якщо передано).
+  let photoUrl: string | null = comp.photo_url ?? null;
+  if (input.photoBase64) {
+    const match = input.photoBase64.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (match) {
+      const contentType = match[1];
+      const bytes = Buffer.from(match[2], "base64");
+      const ext = contentType.split("/")[1];
+      const path = `${user.id}/${input.taskId}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("task-photos")
+        .upload(path, bytes, { contentType });
+      if (!upErr) {
+        photoUrl = supabase.storage.from("task-photos").getPublicUrl(path)
+          .data.publicUrl;
+      }
+    }
+  }
+
+  const helperIds = [...new Set(input.helperIds ?? [])].filter(
+    (id) => id && id !== input.employeeId,
+  );
+  let helpers: { id: string; name: string }[] = [];
+  if (helperIds.length) {
+    const { data: emps } = await supabase
+      .from("employees")
+      .select("id, name")
+      .eq("user_id", user.id)
+      .in("id", helperIds);
+    helpers = emps ?? [];
+  }
+
+  const { error } = await supabase
+    .from("task_completions")
+    .update({
+      employee_id: emp.id,
+      helper_ids: helpers.map((h) => h.id),
+      note: input.note.trim() || null,
+      photo_url: photoUrl,
+    })
+    .eq("id", comp.id);
+  if (error) return { error: "Nie udało się zapisać zmian." };
+
+  return {
+    ok: true,
+    performers: [emp.name, ...helpers.map((h) => h.name)],
+    note: input.note.trim() || null,
+    photoUrl,
+  };
+}

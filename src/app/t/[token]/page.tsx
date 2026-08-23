@@ -63,6 +63,7 @@ export default async function PublicTasksPage({
     string,
     {
       performers: string[];
+      performerIds: string[];
       note: string | null;
       photoUrl: string | null;
       completedAt: string | null;
@@ -77,11 +78,15 @@ export default async function PublicTasksPage({
     completed_at: string | null;
   }>) {
     if (completions[r.task_id]) continue; // беремо найновіше
-    const performers = [r.employee_id, ...(r.helper_ids ?? [])]
-      .map((id) => (id ? nameById.get(id) : undefined))
+    const performerIds = [r.employee_id, ...(r.helper_ids ?? [])].filter(
+      (id): id is string => Boolean(id),
+    );
+    const performers = performerIds
+      .map((id) => nameById.get(id))
       .filter((n): n is string => Boolean(n));
     completions[r.task_id] = {
       performers,
+      performerIds,
       note: r.note,
       photoUrl: r.photo_url,
       completedAt: r.completed_at,

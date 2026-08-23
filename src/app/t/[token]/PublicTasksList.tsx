@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import PhotoThumb from "@/components/PhotoThumb";
-import { addDoneTask, completeTask } from "./actions";
+import { addDoneTask, completeTask, updateCompletion } from "./actions";
 
 export type PublicTask = {
   id: string;
@@ -42,6 +42,7 @@ function fileToDataUrl(file: File): Promise<string> {
 
 type Completion = {
   performers: string[]; // імена всіх виконавців
+  performerIds?: string[];
   note: string | null;
   photoUrl: string | null;
   completedAt?: string | null;
@@ -124,6 +125,7 @@ export default function PublicTasksList({
     () => ({ ...completions }),
   );
   const [active, setActive] = useState<PublicTask | null>(null);
+  const [editing, setEditing] = useState(false);
   const [pinStep, setPinStep] = useState(false);
   // Перший — головний виконавець (вводить PIN), далі — додаткові.
   const [employeeIds, setEmployeeIds] = useState<string[]>([""]);
@@ -209,10 +211,23 @@ export default function PublicTasksList({
 
   function openComplete(task: PublicTask) {
     setActive(task);
+    setEditing(false);
     setPinStep(false);
     setEmployeeIds([""]);
     setNote("");
     setPhoto(null);
+    setPin("");
+    setError(null);
+  }
+
+  function openEdit(task: PublicTask) {
+    const info = details[task.id];
+    setActive(task);
+    setEditing(true);
+    setPinStep(false);
+    setEmployeeIds(info?.performerIds?.length ? info.performerIds : [""]);
+    setNote(info?.note ?? "");
+    setPhoto(info?.photoUrl ?? null);
     setPin("");
     setError(null);
   }
@@ -225,6 +240,7 @@ export default function PublicTasksList({
 
   function closeAll() {
     setActive(null);
+    setEditing(false);
     setPinStep(false);
   }
 
@@ -248,33 +264,68 @@ export default function PublicTasksList({
     if (!active) return;
     setError(null);
     setLoading(true);
+    const taskId = active.id;
     const chosen = employeeIds.filter(Boolean);
+    const performers = chosen
+      .map((id) => employees.find((e) => e.id === id)?.name)
+      .filter((n): n is string => Boolean(n));
+
+    // Нове фото — лише якщо це data:-URL (інакше лишаємо існуюче).
+    const newPhoto = photo && photo.startsWith("data:") ? photo : null;
+
+    if (editing) {
+      const result = await updateCompletion({
+        token,
+        taskId,
+        employeeId: chosen[0],
+        helperIds: chosen.slice(1),
+        pin,
+        note,
+        photoBase64: newPhoto,
+      });
+      setLoading(false);
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+      setDetails((prev) => ({
+        ...prev,
+        [taskId]: {
+          performers: result.performers,
+          performerIds: chosen,
+          note: result.note,
+          photoUrl: result.photoUrl,
+          completedAt: prev[taskId]?.completedAt ?? new Date().toISOString(),
+        },
+      }));
+      closeAll();
+      return;
+    }
+
     const result = await completeTask({
-      taskId: active.id,
+      taskId,
       employeeId: chosen[0],
       helperIds: chosen.slice(1),
       pin,
       note,
-      photoBase64: photo,
+      photoBase64: newPhoto,
     });
     setLoading(false);
     if ("error" in result) {
       setError(result.error);
       return;
     }
-    const performers = chosen
-      .map((id) => employees.find((e) => e.id === id)?.name)
-      .filter((n): n is string => Boolean(n));
     setDetails((prev) => ({
       ...prev,
-      [active.id]: {
+      [taskId]: {
         performers,
+        performerIds: chosen,
         note: note.trim() || null,
         photoUrl: photo,
         completedAt: new Date().toISOString(),
       },
     }));
-    setDoneIds((prev) => new Set(prev).add(active.id));
+    setDoneIds((prev) => new Set(prev).add(taskId));
     closeAll();
   }
 
@@ -351,17 +402,19 @@ export default function PublicTasksList({
 
                 {/* Теги */}
                 <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {task.priority === 1 && <PriorityTag />}
-                  {task.requiresPhoto && <FotoTag />}
-                  {!done && (
-                    <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400">
-                      Aktywne
-                    </span>
-                  )}
-                  {done &&
+                  {done ? (
                     info?.performers?.map((name) => (
                       <NameTag key={name} name={name} />
-                    ))}
+                    ))
+                  ) : (
+                    <>
+                      {task.priority === 1 && <PriorityTag />}
+                      {task.requiresPhoto && <FotoTag />}
+                      <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                        Aktywne
+                      </span>
+                    </>
+                  )}
                 </div>
 
                 {/* Примітка й фото */}
@@ -374,6 +427,16 @@ export default function PublicTasksList({
                       <PhotoThumb src={info.photoUrl} alt="Zdjęcie wykonania" />
                     )}
                   </div>
+                )}
+
+                {done && (
+                  <button
+                    type="button"
+                    onClick={() => openEdit(task)}
+                    className="mt-3 rounded-[4px] border border-[#34343c] px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-[#232327]"
+                  >
+                    Edytuj
+                  </button>
                 )}
               </li>
             );
