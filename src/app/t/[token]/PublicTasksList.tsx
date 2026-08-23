@@ -126,6 +126,7 @@ export default function PublicTasksList({
   );
   const [active, setActive] = useState<PublicTask | null>(null);
   const [editing, setEditing] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [pinStep, setPinStep] = useState(false);
   // Перший — головний виконавець (вводить PIN), далі — додаткові.
   const [employeeIds, setEmployeeIds] = useState<string[]>([""]);
@@ -381,13 +382,56 @@ export default function PublicTasksList({
                       </svg>
                       {formatTime(info?.completedAt) ?? "Wykonane"}
                     </span>
-                    {info?.performers && info.performers.length > 0 && (
-                      <span className="flex items-center pl-2">
-                        {info.performers.map((name) => (
-                          <Avatar key={name} name={name} />
-                        ))}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {info?.performers && info.performers.length > 0 && (
+                        <span className="flex items-center pl-2">
+                          {info.performers.map((name) => (
+                            <Avatar key={name} name={name} />
+                          ))}
+                        </span>
+                      )}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenMenuId((cur) =>
+                              cur === task.id ? null : task.id,
+                            )
+                          }
+                          aria-label="Opcje"
+                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="5" cy="12" r="1.6" />
+                            <circle cx="12" cy="12" r="1.6" />
+                            <circle cx="19" cy="12" r="1.6" />
+                          </svg>
+                        </button>
+                        {openMenuId === task.id && (
+                          <>
+                            <button
+                              type="button"
+                              aria-hidden="true"
+                              tabIndex={-1}
+                              onClick={() => setOpenMenuId(null)}
+                              className="fixed inset-0 z-10 cursor-default"
+                            />
+                            <div className="absolute right-0 z-20 mt-1 w-32 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpenMenuId(null);
+                                  openEdit(task);
+                                }}
+                                className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-[#232327]"
+                              >
+                                Edytuj
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -429,15 +473,6 @@ export default function PublicTasksList({
                   </div>
                 )}
 
-                {done && (
-                  <button
-                    type="button"
-                    onClick={() => openEdit(task)}
-                    className="mt-3 rounded-[4px] border border-[#34343c] px-3 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-[#232327]"
-                  >
-                    Edytuj
-                  </button>
-                )}
               </li>
             );
           })}
