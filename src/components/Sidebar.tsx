@@ -226,10 +226,10 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
                   onClick={() => setMobileOpen(false)}
                   aria-label={item.label}
                   title={!open ? item.label : undefined}
-                  className={`flex w-full items-center gap-3 whitespace-nowrap rounded-[4px] px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                  className={`relative flex w-full items-center gap-3 whitespace-nowrap rounded-[6px] px-3 py-2.5 text-left text-sm transition-colors ${
                     isActive
-                      ? "bg-[#2f2f37] text-white"
-                      : "text-gray-400 hover:bg-[#232327] hover:text-gray-100"
+                      ? "bg-[#1e2a3a] font-semibold text-[#3b82f6] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-[#3b82f6]"
+                      : "font-medium text-gray-400 hover:bg-[#232327] hover:text-gray-100"
                   }`}
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center">
