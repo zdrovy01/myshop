@@ -203,7 +203,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
             width={1555}
             height={400}
             priority
-            className="h-auto w-1/2 invert"
+            className="h-auto w-36 max-w-none shrink-0 invert"
           />
         )}
         <button
