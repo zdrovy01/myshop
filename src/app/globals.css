@@ -7,9 +7,9 @@
   --foreground: #ededed;
 }
 
-/* Більший базовий розмір — увесь текст (rem-розміри Tailwind) масштабується. */
+/* Базовий розмір шрифту. */
 html {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 body {

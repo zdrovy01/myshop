@@ -204,7 +204,11 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } ${open ? "" : "md:w-[72px]"}`}
       >
-      <div className="flex h-[76px] items-center justify-between px-4">
+      <div
+        className={`flex h-[76px] items-center px-4 ${
+          expanded ? "justify-between" : "justify-center"
+        }`}
+      >
         {expanded && (
           <Image
             src="/logo.png"
@@ -235,7 +239,9 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
                   onClick={() => setMobileOpen(false)}
                   aria-label={item.label}
                   title={!expanded ? item.label : undefined}
-                  className={`relative flex w-full items-center gap-3 whitespace-nowrap rounded-[6px] px-3 py-2.5 text-left text-sm transition-colors ${
+                  className={`relative flex w-full items-center whitespace-nowrap rounded-[6px] py-2.5 text-left text-sm transition-colors ${
+                    expanded ? "gap-3 px-3" : "justify-center px-0"
+                  } ${
                     isActive
                       ? "bg-[#1e2a3a] font-semibold text-[#3b82f6] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-[#3b82f6]"
                       : "font-medium text-gray-400 hover:bg-[#232327] hover:text-gray-100"
@@ -251,7 +257,11 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           })}
         </ul>
       </nav>
-      <div className="mt-auto flex items-center gap-3 border-t border-[#26262b] p-4">
+      <div
+        className={`mt-auto flex items-center border-t border-[#26262b] p-4 ${
+          expanded ? "gap-3" : "justify-center"
+        }`}
+      >
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-300 ${
             isZabka ? "bg-[#1a1a1e] ring-1 ring-[#34343c]" : "bg-[#2a2a30]"
