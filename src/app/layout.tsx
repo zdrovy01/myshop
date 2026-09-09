@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -10,6 +10,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "MyShop trial",
   description: "Додаток для магазинів Żabka — MyShop by zdrovy",
+};
+
+// Забороняємо масштабування — iOS не наближає при кліку/фокусі.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
