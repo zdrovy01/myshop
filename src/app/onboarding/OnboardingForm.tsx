@@ -107,7 +107,7 @@ export default function OnboardingForm() {
               onChange={(e) =>
                 setShopType(e.target.value as "zabka" | "other")
               }
-              className={`${fieldClass} bg-[#1a1a1e]`}
+              className={`${fieldClass} bg-[#212121]`}
             >
               <option value="zabka">Żabka</option>
               <option value="other">Inny sklep</option>
@@ -147,7 +147,7 @@ export default function OnboardingForm() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 rounded-[4px] bg-[#2f2f37] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] disabled:opacity-50"
+            className="mt-2 rounded-[4px] bg-[#212121] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c] disabled:opacity-50"
           >
             {loading ? "..." : "Zapisz i kontynuuj"}
           </button>

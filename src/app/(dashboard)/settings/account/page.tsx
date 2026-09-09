@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 import SettingsForm from "./SettingsForm";
 
+export const metadata = { title: "Ustawienia konta" };
+
 export default async function AccountSettingsPage() {
   const userId = await getSessionUserId();
   const supabase = createAdminClient();

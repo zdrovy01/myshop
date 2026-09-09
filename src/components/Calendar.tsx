@@ -58,7 +58,7 @@ export default function Calendar({
           type="button"
           onClick={() => setView(new Date(year, month - 1, 1))}
           aria-label="Poprzedni miesiąc"
-          className="rounded-[4px] px-2 py-1 text-gray-400 hover:bg-[#232327] hover:text-gray-100"
+          className="rounded-[4px] px-2 py-1 text-gray-400 hover:bg-[#2c2c2c] hover:text-gray-100"
         >
           ‹
         </button>
@@ -69,7 +69,7 @@ export default function Calendar({
           type="button"
           onClick={() => setView(new Date(year, month + 1, 1))}
           aria-label="Następny miesiąc"
-          className="rounded-[4px] px-2 py-1 text-gray-400 hover:bg-[#232327] hover:text-gray-100"
+          className="rounded-[4px] px-2 py-1 text-gray-400 hover:bg-[#2c2c2c] hover:text-gray-100"
         >
           ›
         </button>
@@ -100,10 +100,10 @@ export default function Calendar({
                 disabled
                   ? "cursor-not-allowed text-gray-300"
                   : selected
-                    ? "bg-[#2f2f37] text-white"
+                    ? "bg-[#212121] text-white"
                     : isToday
-                      ? "bg-[#232327] font-semibold text-gray-100"
-                      : "text-gray-200 hover:bg-[#232327]"
+                      ? "bg-[#212121] font-semibold text-gray-100"
+                      : "text-gray-200 hover:bg-[#2c2c2c]"
               }`}
             >
               {d}

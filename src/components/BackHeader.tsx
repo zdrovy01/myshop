@@ -12,7 +12,7 @@ export default function BackHeader({
       <Link
         href={href}
         aria-label="Wstecz"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2f2f37] text-white transition-colors hover:bg-[#3a3a42]"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#212121] text-white transition-colors hover:bg-[#2c2c2c]"
       >
         <svg
           width="18"

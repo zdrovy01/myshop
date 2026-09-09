@@ -80,7 +80,7 @@ function Avatar({ name }: { name: string }) {
   return (
     <span
       title={name}
-      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2f37] text-[10px] font-semibold text-gray-200 ring-2 ring-[#161619] first:ml-0"
+      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2c2c2c] text-[10px] font-semibold text-gray-200 ring-2 ring-[#212121] first:ml-0"
     >
       {initials(name)}
     </span>
@@ -197,7 +197,7 @@ export default function TasksList({
   const quickAddBar = (
     <form
       onSubmit={submitQuickAdd}
-      className="flex items-end gap-2 rounded-3xl border border-[#2f2f37] bg-[#1a1a1e] py-2 pl-4 pr-2 shadow-lg"
+      className="flex items-end gap-2 rounded-3xl border border-[#212121] bg-[#212121] py-2 pl-4 pr-2 shadow-lg"
     >
       <textarea
         ref={quickRef}
@@ -218,7 +218,7 @@ export default function TasksList({
         type="submit"
         disabled={!quickName.trim()}
         aria-label="Dodaj zadanie"
-        className="flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-full bg-white text-black transition-opacity hover:opacity-90 disabled:opacity-30"
+        className="flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-full bg-[#2c67c5] text-white transition-opacity hover:opacity-90 disabled:opacity-70"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M12 19V5M5 12l7-7 7 7" />
@@ -244,7 +244,7 @@ export default function TasksList({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden py-4 md:py-8">
+    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden py-4 md:py-8">
       <div className="mb-6 flex shrink-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <h1 className="hidden text-2xl font-semibold text-gray-100 md:block">
           Lista zadań
@@ -253,7 +253,7 @@ export default function TasksList({
           <button
             type="button"
             onClick={() => setCalendarOpen(true)}
-            className="flex items-center gap-2 whitespace-nowrap rounded-[4px] border border-[#34343c] px-3 py-2 text-sm font-medium text-gray-200 transition-colors hover:bg-[#232327]"
+            className="flex items-center gap-2 whitespace-nowrap rounded-[4px] border border-[#34343c] px-3 py-2 text-sm font-medium text-gray-200 transition-colors hover:bg-[#2c2c2c]"
           >
             <svg
               width="16"
@@ -278,8 +278,8 @@ export default function TasksList({
               aria-pressed={editMode}
               className={`ml-auto whitespace-nowrap rounded-[4px] px-3 py-2 text-sm font-medium text-white transition-colors md:ml-0 ${
                 editMode
-                  ? "bg-[#3a3a42] hover:bg-[#3a3a42]"
-                  : "bg-[#2f2f37] hover:bg-[#3a3a42]"
+                  ? "bg-[#2c2c2c] hover:bg-[#2c2c2c]"
+                  : "bg-[#212121] hover:bg-[#2c2c2c]"
               }`}
             >
               {editMode ? "Zapisz" : "Edytuj"}
@@ -305,8 +305,8 @@ export default function TasksList({
       )}
 
       {isEmpty ? (
-        /* Порожній стан — поле по центру екрана */
-        <div className="flex flex-1 flex-col items-center justify-center">
+        /* Порожній стан — поле по центру всієї висоти екрана */
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
           <h2 className="mb-6 text-center text-xl font-semibold text-gray-100">
             {isPast ? "Brak zadań" : "Zacznij od pierwszego zadania"}
           </h2>
@@ -344,11 +344,11 @@ export default function TasksList({
                   setOverIndex(null);
                 }
               }}
-              className={`rounded-xl border border-[#26262b] bg-[#161619] p-4 transition-colors ${
+              className={`rounded-xl border border-[#26262b] bg-[#212121] p-4 transition-colors ${
                 dragIndex === index ? "opacity-40" : ""
               } ${
                 overIndex === index && dragIndex !== index
-                  ? "border-[#3a3a42]"
+                  ? "border-[#2c2c2c]"
                   : ""
               }`}
             >
@@ -413,7 +413,7 @@ export default function TasksList({
                         })
                       }
                       aria-label="Priorytet"
-                      className="rounded-[4px] border border-[#34343c] bg-[#1a1a1e] px-2 py-1 text-xs text-gray-200 outline-none focus:border-gray-400"
+                      className="rounded-[4px] border border-[#34343c] bg-[#212121] px-2 py-1 text-xs text-gray-200 outline-none focus:border-gray-400"
                     >
                       <option value={1}>Priorytet 1</option>
                       <option value={2}>Priorytet 2</option>
@@ -427,7 +427,7 @@ export default function TasksList({
                         }
                         aria-label="Opcje"
                         title="Opcje"
-                        className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                        className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#2c2c2c] hover:text-gray-100"
                       >
                         <DotsIcon />
                       </button>
@@ -440,11 +440,11 @@ export default function TasksList({
                             onClick={() => setOpenIndex(null)}
                             className="fixed inset-0 z-10 cursor-default"
                           />
-                          <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                          <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#212121] shadow-lg">
                             <button
                               type="button"
                               onClick={() => handleDelete(index)}
-                              className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
+                              className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#2c2c2c]"
                             >
                               Usuń
                             </button>
@@ -496,7 +496,7 @@ export default function TasksList({
                       info?.performers?.map((name) => (
                         <span
                           key={name}
-                          className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300"
+                          className="rounded-full bg-[#212121] px-2.5 py-1 text-xs font-medium text-gray-300"
                         >
                           {name}
                         </span>
@@ -512,7 +512,7 @@ export default function TasksList({
                           }
                           aria-label="Opcje"
                           title="Opcje"
-                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#2c2c2c] hover:text-gray-100"
                         >
                           <DotsIcon />
                         </button>
@@ -525,11 +525,11 @@ export default function TasksList({
                               onClick={() => setOpenIndex(null)}
                               className="fixed inset-0 z-10 cursor-default"
                             />
-                            <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                            <div className="absolute right-0 z-20 mt-1 w-36 overflow-hidden rounded-md border border-[#26262b] bg-[#212121] shadow-lg">
                               <button
                                 type="button"
                                 onClick={() => handleDelete(index)}
-                                className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#232327]"
+                                className="block w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-[#2c2c2c]"
                               >
                                 Usuń
                               </button>

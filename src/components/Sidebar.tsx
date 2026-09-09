@@ -120,7 +120,34 @@ function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-const navItems: { label: string; href: string; icon: React.ReactNode }[] = [
+function PodgladIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+      aria-hidden="true"
+    >
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+type NavItem = {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+  external?: boolean;
+};
+
+const navItems: NavItem[] = [
   { label: "Lista zadań", href: "/", icon: <ListaZadanIcon /> },
   { label: "Pracownicy", href: "/employees", icon: <PracownikiIcon /> },
   { label: "Ustawienia", href: "/settings", icon: <UstawieniaIcon /> },
@@ -132,6 +159,7 @@ type SidebarUser = {
   lastName: string | null;
   shopName: string | null;
   shopAddress: string | null;
+  qrToken: string | null;
 };
 
 export default function Sidebar({ user }: { user?: SidebarUser | null }) {
@@ -171,15 +199,29 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   // Розгорнутий вигляд: десктоп-панель відкрита АБО відкрита мобільна шухляда.
   const expanded = open || mobileOpen;
 
+  // Список пунктів + посилання на публічний вигляд для працівників (нова вкладка).
+  const navList: NavItem[] = user?.qrToken
+    ? [
+        navItems[0],
+        {
+          label: "Widok pracownika",
+          href: `/t/${user.qrToken}`,
+          icon: <PodgladIcon />,
+          external: true,
+        },
+        ...navItems.slice(1),
+      ]
+    : navItems;
+
   return (
     <>
       {/* Мобільна верхня панель: кнопка меню + назва сторінки */}
-      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-[#26262b] bg-[#1a1a1e] px-4 md:hidden">
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-[#26262b] bg-black px-4 md:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Otwórz menu"
-          className="-ml-1 shrink-0 rounded-[4px] p-2 text-gray-200 hover:bg-[#232327]"
+          className="-ml-1 shrink-0 rounded-[4px] p-2 text-gray-200 hover:bg-[#2c2c2c]"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" />
@@ -200,7 +242,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-[#26262b] bg-[#1a1a1e] transition-[transform,width] duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 shrink-0 flex-col overflow-hidden border-r border-[#26262b] bg-black transition-[transform,width] duration-300 ease-in-out md:sticky md:top-0 md:z-auto md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         } ${open ? "" : "md:w-[72px]"}`}
       >
@@ -223,35 +265,54 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           type="button"
           onClick={() => setOpen(!open)}
           aria-label={open ? "Zamknij panel" : "Otwórz panel"}
-          className="hidden rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-gray-100 md:inline-flex"
+          className="hidden rounded-[4px] p-2 text-gray-400 hover:bg-[#2c2c2c] hover:text-gray-100 md:inline-flex"
         >
           <ChevronIcon direction={open ? "left" : "right"} />
         </button>
       </div>
       <nav className="px-3">
         <ul className="flex flex-col gap-1">
-          {navItems.map((item) => {
-            const isActive = item.href === pathname;
+          {navList.map((item) => {
+            const isActive = !item.external && item.href === pathname;
+            const linkClass = `flex w-full items-center whitespace-nowrap rounded-xl py-2.5 text-left text-sm font-medium transition-colors ${
+              expanded ? "gap-3 px-3" : "justify-center px-0"
+            } ${
+              isActive
+                ? "bg-[#212121] text-white"
+                : "text-gray-400 hover:bg-[#212121] hover:text-white"
+            }`;
+            const inner = (
+              <>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center">
+                  {item.icon}
+                </span>
+                {expanded && item.label}
+              </>
+            );
             return (
               <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  aria-label={item.label}
-                  title={!expanded ? item.label : undefined}
-                  className={`relative flex w-full items-center whitespace-nowrap rounded-[6px] py-2.5 text-left text-sm transition-colors ${
-                    expanded ? "gap-3 px-3" : "justify-center px-0"
-                  } ${
-                    isActive
-                      ? "bg-[#1e2a3a] font-semibold text-[#3b82f6] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-[#3b82f6]"
-                      : "font-medium text-gray-400 hover:bg-[#232327] hover:text-gray-100"
-                  }`}
-                >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center">
-                    {item.icon}
-                  </span>
-                  {expanded && item.label}
-                </Link>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label}
+                    title={!expanded ? item.label : undefined}
+                    className={linkClass}
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    aria-label={item.label}
+                    title={!expanded ? item.label : undefined}
+                    className={linkClass}
+                  >
+                    {inner}
+                  </Link>
+                )}
               </li>
             );
           })}
@@ -264,7 +325,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
       >
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-300 ${
-            isZabka ? "bg-[#1a1a1e] ring-1 ring-[#34343c]" : "bg-[#2a2a30]"
+            isZabka ? "bg-[#212121] ring-1 ring-[#34343c]" : "bg-[#212121]"
           }`}
         >
           {isZabka ? (
@@ -292,7 +353,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
               onClick={handleLogout}
               aria-label="Wyloguj się"
               title="Wyloguj się"
-              className="ml-auto shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-gray-100"
+              className="ml-auto shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#2c2c2c] hover:text-gray-100"
             >
               <LogoutIcon />
             </button>

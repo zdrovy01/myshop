@@ -2,6 +2,8 @@ import Image from "next/image";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 
+export const metadata = { title: "Subskrypcja" };
+
 function Check({ plus = false }: { plus?: boolean }) {
   return (
     <svg
@@ -66,7 +68,7 @@ export default async function SubscriptionPage() {
       </p>
 
       {/* Що дає підписка */}
-      <div className="mt-8 w-full rounded-2xl border border-[#26262b] bg-[#161619] p-5 text-left">
+      <div className="mt-8 w-full rounded-2xl border border-[#26262b] bg-[#212121] p-5 text-left">
         <p className="text-sm text-gray-300">
           Przez pierwszy miesiąc masz wszystko za darmo. Wykup subskrypcję, aby
           po okresie próbnym dalej korzystać ze wszystkich funkcji:
@@ -83,7 +85,7 @@ export default async function SubscriptionPage() {
 
       {/* Кнопка / статус */}
       {subscribed ? (
-        <div className="mt-8 w-full rounded-full bg-[#232327] py-4 text-center text-base font-semibold text-gray-300">
+        <div className="mt-8 w-full rounded-full bg-[#212121] py-4 text-center text-base font-semibold text-gray-300">
           Subskrypcja aktywna
         </div>
       ) : (

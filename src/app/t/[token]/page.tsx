@@ -94,7 +94,7 @@ export default async function PublicTasksPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0b0d] px-4 py-8 sm:py-10">
+    <div className="min-h-screen bg-black px-4 py-8 sm:py-10">
       <div className="mx-auto w-full max-w-2xl">
         <PublicTasksList
           token={token}

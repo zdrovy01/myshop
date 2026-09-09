@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 import EmployeesList, { type Employee } from "./EmployeesList";
 
+export const metadata = { title: "Pracownicy" };
+
 export default async function EmployeesPage() {
   const userId = await getSessionUserId();
   const supabase = createAdminClient();

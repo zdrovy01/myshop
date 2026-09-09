@@ -30,7 +30,7 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative z-10 w-full max-w-md rounded-lg bg-[#1a1a1e] p-6 shadow-xl"
+        className="relative z-10 w-full max-w-md rounded-lg bg-[#212121] p-6 shadow-xl"
       >
         <h2 className="mb-4 text-lg font-semibold text-gray-100">{title}</h2>
         {children}

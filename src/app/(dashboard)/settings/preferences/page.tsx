@@ -1,5 +1,7 @@
 import BackHeader from "@/components/BackHeader";
 
+export const metadata = { title: "Preferencje" };
+
 export default function PreferencesSettingsPage() {
   return (
     <div className="py-8">

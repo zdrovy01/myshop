@@ -72,7 +72,7 @@ function Avatar({ name }: { name: string }) {
   return (
     <span
       title={name}
-      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#2f2f37] text-[10px] font-semibold text-gray-200 ring-2 ring-[#1a1a1e] first:ml-0"
+      className="-ml-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#212121] text-[10px] font-semibold text-gray-200 ring-2 ring-[#212121] first:ml-0"
     >
       {initials(name)}
     </span>
@@ -101,7 +101,7 @@ function FotoTag() {
 
 function NameTag({ name }: { name: string }) {
   return (
-    <span className="rounded-full bg-[#232327] px-2.5 py-1 text-xs font-medium text-gray-300">
+    <span className="rounded-full bg-[#212121] px-2.5 py-1 text-xs font-medium text-gray-300">
       {name}
     </span>
   );
@@ -346,7 +346,7 @@ export default function PublicTasksList({
         <button
           type="button"
           onClick={openAdd}
-          className="shrink-0 rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42]"
+          className="shrink-0 rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c]"
         >
           Dodaj
         </button>
@@ -368,8 +368,8 @@ export default function PublicTasksList({
               <li
                 key={task.id}
                 onClick={done ? undefined : () => openComplete(task)}
-                className={`rounded-xl border border-[#26262b] bg-[#161619] p-4 transition-colors ${
-                  done ? "" : "cursor-pointer hover:border-[#3a3a42]"
+                className={`rounded-xl border border-[#26262b] bg-[#212121] p-4 transition-colors ${
+                  done ? "" : "cursor-pointer hover:border-[#2c2c2c]"
                 }`}
               >
                 {/* Верх: час виконання + аватарки виконавців */}
@@ -399,7 +399,7 @@ export default function PublicTasksList({
                             )
                           }
                           aria-label="Opcje"
-                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                          className="rounded-[4px] p-1.5 text-gray-400 transition-colors hover:bg-[#2c2c2c] hover:text-gray-100"
                         >
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <circle cx="5" cy="12" r="1.6" />
@@ -416,14 +416,14 @@ export default function PublicTasksList({
                               onClick={() => setOpenMenuId(null)}
                               className="fixed inset-0 z-10 cursor-default"
                             />
-                            <div className="absolute right-0 z-20 mt-1 w-32 overflow-hidden rounded-md border border-[#26262b] bg-[#1a1a1e] shadow-lg">
+                            <div className="absolute right-0 z-20 mt-1 w-32 overflow-hidden rounded-md border border-[#26262b] bg-[#212121] shadow-lg">
                               <button
                                 type="button"
                                 onClick={() => {
                                   setOpenMenuId(null);
                                   openEdit(task);
                                 }}
-                                className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-[#232327]"
+                                className="block w-full px-4 py-2 text-left text-sm text-gray-200 hover:bg-[#2c2c2c]"
                               >
                                 Edytuj
                               </button>
@@ -494,7 +494,7 @@ export default function PublicTasksList({
                         prev.map((v, idx) => (idx === i ? e.target.value : v)),
                       )
                     }
-                    className="flex-1 rounded-[4px] border border-[#34343c] bg-[#1a1a1e] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
+                    className="flex-1 rounded-[4px] border border-[#34343c] bg-[#212121] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
                   >
                     <option value="">
                       {i === 0 ? "Wybierz pracownika…" : "Dodatkowy pracownik…"}
@@ -514,7 +514,7 @@ export default function PublicTasksList({
                         )
                       }
                       aria-label="Usuń pracownika"
-                      className="shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#232327] hover:text-red-400"
+                      className="shrink-0 rounded-[4px] p-2 text-gray-400 hover:bg-[#2c2c2c] hover:text-red-400"
                     >
                       ×
                     </button>
@@ -525,7 +525,7 @@ export default function PublicTasksList({
                 <button
                   type="button"
                   onClick={() => setEmployeeIds((prev) => [...prev, ""])}
-                  className="self-start rounded-[4px] border border-[#34343c] px-3 py-1.5 text-sm font-medium text-gray-200 hover:bg-[#232327]"
+                  className="self-start rounded-[4px] border border-[#34343c] px-3 py-1.5 text-sm font-medium text-gray-200 hover:bg-[#2c2c2c]"
                 >
                   + Dodaj pracownika
                 </button>
@@ -573,13 +573,13 @@ export default function PublicTasksList({
               <button
                 type="button"
                 onClick={closeAll}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
               >
                 Anuluj
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c]"
               >
                 Zapisz
               </button>
@@ -617,14 +617,14 @@ export default function PublicTasksList({
                   setPinStep(false);
                   setError(null);
                 }}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
               >
                 Wstecz
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42] disabled:opacity-50"
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c] disabled:opacity-50"
               >
                 {loading ? "..." : "Potwierdź"}
               </button>
@@ -673,13 +673,13 @@ export default function PublicTasksList({
               <button
                 type="button"
                 onClick={() => setAddOpen(false)}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
               >
                 Anuluj
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c]"
               >
                 Dodaj
               </button>
@@ -720,14 +720,14 @@ export default function PublicTasksList({
                   setAddPinStep(false);
                   setAddError(null);
                 }}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
               >
                 Wstecz
               </button>
               <button
                 type="submit"
                 disabled={addLoading}
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42] disabled:opacity-50"
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c] disabled:opacity-50"
               >
                 {addLoading ? "..." : "Potwierdź"}
               </button>

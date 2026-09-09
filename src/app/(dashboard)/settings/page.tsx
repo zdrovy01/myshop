@@ -72,6 +72,8 @@ function Chevron() {
   );
 }
 
+export const metadata = { title: "Ustawienia" };
+
 export default function SettingsPage() {
   return (
     <div className="py-8">
@@ -79,12 +81,12 @@ export default function SettingsPage() {
         Ustawienia
       </h1>
 
-      <div className="divide-y divide-[#26262b] overflow-hidden rounded-2xl border border-[#26262b] bg-[#161619]">
+      <div className="divide-y divide-[#26262b] overflow-hidden rounded-2xl border border-[#26262b] bg-[#212121]">
         {options.map((opt) => (
           <Link
             key={opt.href}
             href={opt.href}
-            className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-[#1c1c20]"
+            className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-[#2c2c2c]"
           >
             <span className="shrink-0 text-gray-300">{opt.icon}</span>
             <span className="flex min-w-0 flex-1 flex-col">

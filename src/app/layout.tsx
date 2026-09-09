@@ -10,6 +10,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "MyShop trial",
   description: "Додаток для магазинів Żabka — MyShop by zdrovy",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 // Забороняємо масштабування — iOS не наближає при кліку/фокусі.

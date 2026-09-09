@@ -126,7 +126,7 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
         <button
           type="button"
           onClick={openAdd}
-          className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42]"
+          className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c]"
         >
           Dodaj pracownika
         </button>
@@ -178,13 +178,13 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
               <button
                 type="button"
                 onClick={() => setDialog(null)}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
+                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
               >
                 Anuluj
               </button>
               <button
                 type="submit"
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c]"
               >
                 Zapisz
               </button>
@@ -197,10 +197,10 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
         {employees.map((employee, index) => (
           <li
             key={employee.id}
-            className="flex items-center justify-between gap-2 bg-[#1a1a1e] px-8 py-4 transition-colors hover:bg-[#232327]"
+            className="flex items-center justify-between gap-2 bg-[#212121] px-8 py-4 transition-colors hover:bg-[#2c2c2c]"
           >
             <div className="flex min-w-0 items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2a2a30] text-sm font-semibold text-gray-300">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2c2c2c] text-sm font-semibold text-gray-300">
                 {initials(employee.name)}
               </div>
               <div className="min-w-0">
@@ -216,7 +216,7 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
                 onClick={() => openEdit(index)}
                 aria-label="Edytuj"
                 title="Edytuj"
-                className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#232327] hover:text-gray-100"
+                className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#2c2c2c] hover:text-gray-100"
               >
                 <PencilIcon />
               </button>
@@ -225,7 +225,7 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
                 onClick={() => handleDelete(index)}
                 aria-label="Usuń"
                 title="Usuń"
-                className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#232327] hover:text-red-400"
+                className="rounded-[4px] p-2 text-gray-400 transition-colors hover:bg-[#2c2c2c] hover:text-red-400"
               >
                 <TrashIcon />
               </button>

@@ -7,6 +7,7 @@ export type CurrentUser = {
   email: string | null;
   shopName: string | null;
   shopAddress: string | null;
+  qrToken: string | null;
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -16,7 +17,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("users")
-    .select("first_name, last_name, email, shop_name, shop_address")
+    .select("first_name, last_name, email, shop_name, shop_address, qr_token")
     .eq("id", userId)
     .maybeSingle();
 
@@ -28,5 +29,6 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     email: data.email,
     shopName: data.shop_name,
     shopAddress: data.shop_address,
+    qrToken: data.qr_token,
   };
 }

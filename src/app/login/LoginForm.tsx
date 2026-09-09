@@ -88,7 +88,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 rounded-[4px] bg-[#2f2f37] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42] disabled:opacity-50"
+            className="mt-2 rounded-[4px] bg-[#212121] px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c] disabled:opacity-50"
           >
             {loading
               ? "..."

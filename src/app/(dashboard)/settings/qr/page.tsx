@@ -6,6 +6,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUserId } from "@/lib/session";
 import DownloadPdfButton from "./DownloadPdfButton";
 
+export const metadata = { title: "QR kod listy zadań" };
+
 export default async function QrCodePage() {
   const userId = await getSessionUserId();
   const supabase = createAdminClient();
@@ -44,14 +46,14 @@ export default async function QrCodePage() {
       <div className="flex max-w-sm flex-col gap-5">
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-gray-200">Klucz (ID)</span>
-          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#232327] px-3 py-2 text-sm text-gray-100">
+          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#212121] px-3 py-2 text-sm text-gray-100">
             {token}
           </code>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-gray-200">Link</span>
-          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#232327] px-3 py-2 text-xs text-gray-300">
+          <code className="break-all rounded-[4px] border border-[#26262b] bg-[#212121] px-3 py-2 text-xs text-gray-300">
             {url}
           </code>
         </div>
