@@ -323,11 +323,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
           expanded ? "gap-3" : "justify-center"
         }`}
       >
-        <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-gray-300 ${
-            isZabka ? "bg-[#212121] ring-1 ring-[#34343c]" : "bg-[#212121]"
-          }`}
-        >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white text-sm font-semibold text-black">
           {isZabka ? (
             <Image
               src="/zabkalogo.png"
