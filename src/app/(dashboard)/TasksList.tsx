@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Calendar from "@/components/Calendar";
 import Modal from "@/components/Modal";
 import PhotoThumb from "@/components/PhotoThumb";
@@ -125,8 +125,8 @@ export default function TasksList({
   const [editMode, setEditMode] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
-  const [addOpen, setAddOpen] = useState(false);
-  const [newName, setNewName] = useState("");
+  const [quickName, setQuickName] = useState("");
+  const quickRef = useRef<HTMLTextAreaElement>(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   // Локальна дата з "YYYY-MM-DD" (без зсуву часових поясів).
@@ -175,29 +175,57 @@ export default function TasksList({
     await deleteTask(task.id);
   }
 
-  function openAdd() {
-    setNewName("");
-    setAddOpen(true);
-  }
+  // Автовисота поля вводу.
+  useEffect(() => {
+    const el = quickRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+  }, [quickName]);
 
-  async function submitAdd(e: React.FormEvent) {
+  async function submitQuickAdd(e: React.FormEvent) {
     e.preventDefault();
-
-    // Без "-" — одне завдання; з "-" — кілька (нове після кожного дефіса).
-    const names = (
-      newName.includes("-") ? newName.split("-") : [newName]
-    )
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    if (names.length === 0) return;
-    setAddOpen(false);
-
-    for (const name of names) {
-      const created = await createTask(name, selectedDateIso);
-      if (created) setTasks((prev) => [...prev, created]);
-    }
+    const name = quickName.trim();
+    if (!name) return;
+    setQuickName("");
+    const created = await createTask(name, selectedDateIso);
+    if (created) setTasks((prev) => [...prev, created]);
   }
+
+  const isEmpty = tasks.length === 0;
+
+  const quickAddBar = (
+    <form
+      onSubmit={submitQuickAdd}
+      className="flex items-end gap-2 rounded-3xl border border-[#2f2f37] bg-[#1a1a1e] py-2 pl-4 pr-2 shadow-lg"
+    >
+      <textarea
+        ref={quickRef}
+        value={quickName}
+        onChange={(e) => setQuickName(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            submitQuickAdd(e);
+          }
+        }}
+        rows={1}
+        placeholder="Dodaj zadanie…"
+        aria-label="Nowe zadanie"
+        className="min-w-0 flex-1 resize-none self-center border-0 bg-transparent py-1.5 text-sm leading-6 outline-none focus:border-0 focus:ring-0"
+      />
+      <button
+        type="submit"
+        disabled={!quickName.trim()}
+        aria-label="Dodaj zadanie"
+        className="flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-full bg-white text-black transition-opacity hover:opacity-90 disabled:opacity-30"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+      </button>
+    </form>
+  );
 
   async function toggleEdit() {
     setOpenIndex(null);
@@ -216,9 +244,11 @@ export default function TasksList({
   }
 
   return (
-    <>
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <h1 className="text-2xl font-semibold text-gray-100">Lista zadań</h1>
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden py-4 md:py-8">
+      <div className="mb-6 flex shrink-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h1 className="hidden text-2xl font-semibold text-gray-100 md:block">
+          Lista zadań
+        </h1>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -242,27 +272,18 @@ export default function TasksList({
             {dateLabel}
           </button>
           {!isPast && (
-            <div className="ml-auto flex items-center gap-2 md:ml-0">
-              <button
-                type="button"
-                onClick={toggleEdit}
-                aria-pressed={editMode}
-                className={`whitespace-nowrap rounded-[4px] px-3 py-2 text-sm font-medium text-white transition-colors ${
-                  editMode
-                    ? "bg-[#3a3a42] hover:bg-[#3a3a42]"
-                    : "bg-[#2f2f37] hover:bg-[#3a3a42]"
-                }`}
-              >
-                {editMode ? "Zapisz" : "Edytuj"}
-              </button>
-              <button
-                type="button"
-                onClick={openAdd}
-                className="whitespace-nowrap rounded-[4px] bg-[#2f2f37] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#3a3a42]"
-              >
-                Dodaj zadanie
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={toggleEdit}
+              aria-pressed={editMode}
+              className={`ml-auto whitespace-nowrap rounded-[4px] px-3 py-2 text-sm font-medium text-white transition-colors md:ml-0 ${
+                editMode
+                  ? "bg-[#3a3a42] hover:bg-[#3a3a42]"
+                  : "bg-[#2f2f37] hover:bg-[#3a3a42]"
+              }`}
+            >
+              {editMode ? "Zapisz" : "Edytuj"}
+            </button>
           )}
         </div>
       </div>
@@ -283,40 +304,17 @@ export default function TasksList({
         </Modal>
       )}
 
-      {addOpen && (
-        <Modal title="Nowe zadanie" onClose={() => setAddOpen(false)}>
-          <form onSubmit={submitAdd} className="flex flex-col gap-4">
-            <textarea
-              autoFocus
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              rows={6}
-              placeholder={
-                "Nazwa zadania\n\nAby dodać kilka, oddziel “-”, np.:\n-Kawomat\n-Rozmrozić parówki"
-              }
-              className="resize-none rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
-            />
-
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setAddOpen(false)}
-                className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#232327]"
-              >
-                Anuluj
-              </button>
-              <button
-                type="submit"
-                className="rounded-[4px] bg-[#2f2f37] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a3a42]"
-              >
-                Dodaj
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
-
-      <ul className="flex flex-col gap-3">
+      {isEmpty ? (
+        /* Порожній стан — поле по центру екрана */
+        <div className="flex flex-1 flex-col items-center justify-center">
+          <h2 className="mb-6 text-center text-xl font-semibold text-gray-100">
+            {isPast ? "Brak zadań" : "Zacznij od pierwszego zadania"}
+          </h2>
+          {!isPast && <div className="w-full">{quickAddBar}</div>}
+        </div>
+      ) : (
+        <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 md:-mx-8 md:px-8">
+        <ul className="flex flex-col gap-3 pb-2">
         {(editMode
           ? tasks.map((task, index) => ({ task, index }))
           : tasks
@@ -560,7 +558,15 @@ export default function TasksList({
             </li>
           );
         })}
-      </ul>
-    </>
+        </ul>
+        </div>
+      )}
+
+      {!isEmpty && !isPast && !editMode && (
+        <div className="mt-auto shrink-0 pt-4">
+          <div className="mx-auto w-full max-w-3xl">{quickAddBar}</div>
+        </div>
+      )}
+    </div>
   );
 }

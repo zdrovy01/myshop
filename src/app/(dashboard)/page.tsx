@@ -103,7 +103,7 @@ export default async function ListaZadanPage({
   }
 
   return (
-    <div className="py-8">
+    <div className="flex min-h-0 flex-1 flex-col">
       <TasksList
         key={selectedDate}
         initial={tasks}

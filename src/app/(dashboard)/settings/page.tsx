@@ -39,13 +39,15 @@ const options: {
     ),
   },
   {
-    label: "Język",
-    description: "Język aplikacji",
-    href: "/settings/language",
+    label: "Preferencje",
+    description: "Ustawienia aplikacji",
+    href: "/settings/preferences",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" {...stroke} aria-hidden="true">
-        <circle cx="12" cy="12" r="9" />
-        <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+        <path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h6M14 18h6" />
+        <circle cx="16" cy="6" r="2" />
+        <circle cx="8" cy="12" r="2" />
+        <circle cx="12" cy="18" r="2" />
       </svg>
     ),
   },
@@ -73,7 +75,9 @@ function Chevron() {
 export default function SettingsPage() {
   return (
     <div className="py-8">
-      <h1 className="mb-6 text-2xl font-semibold text-gray-100">Ustawienia</h1>
+      <h1 className="mb-6 hidden text-2xl font-semibold text-gray-100 md:block">
+        Ustawienia
+      </h1>
 
       <div className="divide-y divide-[#26262b] overflow-hidden rounded-2xl border border-[#26262b] bg-[#161619]">
         {options.map((opt) => (

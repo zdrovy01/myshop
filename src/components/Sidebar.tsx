@@ -135,7 +135,7 @@ type SidebarUser = {
 };
 
 export default function Sidebar({ user }: { user?: SidebarUser | null }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -157,28 +157,37 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
       .toUpperCase() || "?";
   const isZabka = user?.shopName === "Żabka";
 
+  const pageTitles: Record<string, string> = {
+    "/": "Lista zadań",
+    "/employees": "Pracownicy",
+    "/settings": "Ustawienia",
+    "/settings/account": "Ustawienia konta",
+    "/settings/qr": "QR kod listy zadań",
+    "/settings/preferences": "Preferencje",
+    "/subscription": "Subskrypcja",
+  };
+  const mobileTitle = pageTitles[pathname] ?? "MyShop";
+
+  // Розгорнутий вигляд: десктоп-панель відкрита АБО відкрита мобільна шухляда.
+  const expanded = open || mobileOpen;
+
   return (
     <>
-      {/* Мобільна верхня панель */}
-      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between border-b border-[#26262b] bg-[#1a1a1e] px-4 md:hidden">
-        <Image
-          src="/logo.png"
-          alt="MyShop by zdrovy"
-          width={1555}
-          height={400}
-          priority
-          className="h-auto w-24 invert"
-        />
+      {/* Мобільна верхня панель: кнопка меню + назва сторінки */}
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-[#26262b] bg-[#1a1a1e] px-4 md:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Otwórz menu"
-          className="rounded-[4px] p-2 text-gray-200 hover:bg-[#232327]"
+          className="-ml-1 shrink-0 rounded-[4px] p-2 text-gray-200 hover:bg-[#232327]"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>
         </button>
+        <span className="truncate text-lg font-semibold text-gray-100">
+          {mobileTitle}
+        </span>
       </div>
 
       {/* Бекдроп для мобільної шухляди */}
@@ -196,7 +205,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
         } ${open ? "" : "md:w-[72px]"}`}
       >
       <div className="flex h-[76px] items-center justify-between px-4">
-        {open && (
+        {expanded && (
           <Image
             src="/logo.png"
             alt="MyShop by zdrovy"
@@ -225,7 +234,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
                   aria-label={item.label}
-                  title={!open ? item.label : undefined}
+                  title={!expanded ? item.label : undefined}
                   className={`relative flex w-full items-center gap-3 whitespace-nowrap rounded-[6px] px-3 py-2.5 text-left text-sm transition-colors ${
                     isActive
                       ? "bg-[#1e2a3a] font-semibold text-[#3b82f6] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-[#3b82f6]"
@@ -235,7 +244,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center">
                     {item.icon}
                   </span>
-                  {open && item.label}
+                  {expanded && item.label}
                 </Link>
               </li>
             );
@@ -260,7 +269,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
             initials
           )}
         </div>
-        {open && (
+        {expanded && (
           <>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-gray-100">

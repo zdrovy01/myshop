@@ -28,7 +28,9 @@ export default function BackHeader({
           <path d="M15 18l-6-6 6-6" />
         </svg>
       </Link>
-      <h1 className="text-2xl font-semibold text-gray-100">{title}</h1>
+      <h1 className="hidden text-2xl font-semibold text-gray-100 md:block">
+        {title}
+      </h1>
     </div>
   );
 }

@@ -120,7 +120,9 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-100">Pracownicy</h1>
+        <h1 className="hidden text-2xl font-semibold text-gray-100 md:block">
+          Pracownicy
+        </h1>
         <button
           type="button"
           onClick={openAdd}

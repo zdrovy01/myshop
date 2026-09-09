@@ -37,10 +37,12 @@ export default async function DashboardLayout({
   if (!complete) redirect("/onboarding");
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-[100dvh] overflow-hidden">
       <Sidebar user={user} />
-      <main className="flex flex-1 justify-center px-4 pt-14 md:px-8 md:pt-0">
-        <div className="w-full max-w-2xl">{children}</div>
+      <main className="flex h-full flex-1 justify-center overflow-y-auto px-4 pt-14 md:px-8 md:pt-0">
+        <div className="flex h-full min-h-0 w-full max-w-3xl flex-col">
+          {children}
+        </div>
       </main>
     </div>
   );
