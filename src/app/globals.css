@@ -7,6 +7,11 @@
   --foreground: #ededed;
 }
 
+/* Більший базовий розмір — увесь текст (rem-розміри Tailwind) масштабується. */
+html {
+  font-size: 18px;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -24,11 +29,12 @@ textarea::placeholder {
   color: #6b7280;
 }
 
-/* Не менше 16px на мобільному — інакше iOS Safari наближає при фокусі. */
+/* Не менше 16px на мобільному — інакше iOS Safari наближає при фокусі.
+   !important, щоб перебити класи Tailwind (напр. text-sm = 14px). */
 @media (max-width: 767px) {
   input,
   textarea,
   select {
-    font-size: 16px;
+    font-size: 16px !important;
   }
 }
