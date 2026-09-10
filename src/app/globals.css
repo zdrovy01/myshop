@@ -29,6 +29,30 @@ textarea::placeholder {
   color: #6b7280;
 }
 
+/* Пульсація світла (порожній стан) — коло збільшується і зникає. */
+@keyframes glowPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.4);
+    opacity: 0;
+  }
+}
+
+.glow-pulse {
+  animation: glowPulse 3.2s ease-out infinite both;
+}
+
+.glow-pulse-delay {
+  animation: glowPulse 3.2s ease-out infinite both;
+  animation-delay: 1.6s;
+}
+
 /* Не менше 16px на мобільному — інакше iOS Safari наближає при фокусі.
    !important, щоб перебити класи Tailwind (напр. text-sm = 14px). */
 @media (max-width: 767px) {

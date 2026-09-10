@@ -31,11 +31,13 @@ export default function Calendar({
   onSelect,
   min,
   max,
+  statuses = {},
 }: {
   value: Date;
   onSelect: (d: Date) => void;
   min?: Date;
   max?: Date;
+  statuses?: Record<string, "done" | "partial">;
 }) {
   const [view, setView] = useState(
     new Date(value.getFullYear(), value.getMonth(), 1),
@@ -90,23 +92,44 @@ export default function Calendar({
           const disabled =
             (min !== undefined && date < new Date(min.getFullYear(), min.getMonth(), min.getDate())) ||
             (max !== undefined && date > new Date(max.getFullYear(), max.getMonth(), max.getDate()));
+          const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+          const status = disabled ? undefined : statuses[iso];
+          const todayMidnight = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+          );
+          const isFuture = !disabled && !isToday && date > todayMidnight;
+          const ring = isToday
+            ? " ring-1 ring-inset ring-[#2c67c5]"
+            : isFuture
+              ? " ring-1 ring-inset ring-[#3a3a3a]"
+              : "";
           return (
             <button
               key={i}
               type="button"
               disabled={disabled}
               onClick={() => onSelect(date)}
-              className={`h-9 rounded-[4px] text-sm transition-colors ${
+              className={`relative flex h-9 items-center justify-center rounded-[4px] text-sm transition-colors ${
                 disabled
-                  ? "cursor-not-allowed text-gray-300"
+                  ? "cursor-not-allowed text-gray-700"
                   : selected
-                    ? "bg-[#212121] text-white"
+                    ? "bg-white font-semibold text-black"
                     : isToday
                       ? "bg-[#212121] font-semibold text-gray-100"
                       : "text-gray-200 hover:bg-[#2c2c2c]"
-              }`}
+              }${ring}`}
             >
               {d}
+              {status && (
+                <span
+                  aria-hidden="true"
+                  className={`absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
+                    status === "done" ? "bg-emerald-400" : "bg-amber-400"
+                  }`}
+                />
+              )}
             </button>
           );
         })}

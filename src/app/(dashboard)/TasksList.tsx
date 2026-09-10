@@ -112,11 +112,13 @@ export default function TasksList({
   completedIds = [],
   completions = {},
   selectedDate: selectedDateIso,
+  dayStatus = {},
 }: {
   initial: Task[];
   completedIds?: string[];
   completions?: Record<string, Completion>;
   selectedDate: string; // YYYY-MM-DD
+  dayStatus?: Record<string, "done" | "partial">;
 }) {
   const router = useRouter();
   const completed = new Set(completedIds);
@@ -193,6 +195,31 @@ export default function TasksList({
   }
 
   const isEmpty = tasks.length === 0;
+
+  // Центр поля вводу — щоб пульсація світла була рівно за ним.
+  const glowWrapRef = useRef<HTMLDivElement>(null);
+  const [glow, setGlow] = useState<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const el = glowWrapRef.current;
+    if (!el || isPast) {
+      setGlow(null);
+      return;
+    }
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      setGlow({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    const main = el.closest("main");
+    if (main) ro.observe(main);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [isEmpty, isPast]);
 
   const quickAddBar = (
     <form
@@ -294,6 +321,7 @@ export default function TasksList({
             value={selectedDate}
             min={minDate}
             max={maxDate}
+            statuses={dayStatus}
             onSelect={(d) => {
               setCalendarOpen(false);
               const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -306,11 +334,33 @@ export default function TasksList({
 
       {isEmpty ? (
         /* Порожній стан — поле по центру всієї висоти екрана */
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <h2 className="mb-6 text-center text-xl font-semibold text-gray-100">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+          {!isPast && glow && (
+            <>
+              {/* Пульсація світла рівно за полем (fixed — щоб не обрізалось) */}
+              <span
+                aria-hidden="true"
+                style={{ left: glow.x, top: glow.y }}
+                className="glow-pulse pointer-events-none fixed z-0 h-96 w-96 rounded-full bg-white/25 blur-3xl"
+              />
+              <span
+                aria-hidden="true"
+                style={{ left: glow.x, top: glow.y }}
+                className="glow-pulse-delay pointer-events-none fixed z-0 h-96 w-96 rounded-full bg-white/25 blur-3xl"
+              />
+            </>
+          )}
+          <h2 className="relative z-10 mb-6 text-center text-xl font-semibold text-gray-100">
             {isPast ? "Brak zadań" : "Zacznij od pierwszego zadania"}
           </h2>
-          {!isPast && <div className="w-full">{quickAddBar}</div>}
+          {!isPast && (
+            <div
+              ref={glowWrapRef}
+              className="pointer-events-auto relative z-10 w-full"
+            >
+              {quickAddBar}
+            </div>
+          )}
         </div>
       ) : (
         <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4 md:-mx-8 md:px-8">

@@ -52,6 +52,44 @@ export default async function ListaZadanPage({
     requiresPhoto: t.requires_photo,
   }));
 
+  // Статус днів для календаря (у межах вікна перегляду): partial / done.
+  const todayStr = todayWarsaw();
+  const [wy, wm, wd] = todayStr.split("-").map(Number);
+  const wBase = new Date(wy, wm - 1, wd);
+  const wMin = new Date(wBase);
+  wMin.setDate(wMin.getDate() - 7);
+  const wMax = new Date(wBase);
+  wMax.setDate(wMax.getDate() + 2);
+  const minIso = isoLocal(wMin);
+  const maxIso = isoLocal(wMax);
+
+  const { data: windowTasks } = await supabase
+    .from("tasks")
+    .select("id, task_date")
+    .eq("user_id", userId)
+    .gte("task_date", minIso)
+    .lte("task_date", maxIso);
+  const winIds = (windowTasks ?? []).map((t) => t.id as string);
+  const { data: winCompletions } = winIds.length
+    ? await supabase
+        .from("task_completions")
+        .select("task_id")
+        .in("task_id", winIds)
+    : { data: [] };
+  const completedSet = new Set(
+    (winCompletions ?? []).map((r) => r.task_id as string),
+  );
+  const perDay: Record<string, { total: number; done: number }> = {};
+  for (const t of windowTasks ?? []) {
+    const key = t.task_date as string;
+    (perDay[key] ??= { total: 0, done: 0 }).total++;
+    if (completedSet.has(t.id as string)) perDay[key].done++;
+  }
+  const dayStatus: Record<string, "done" | "partial"> = {};
+  for (const [k, v] of Object.entries(perDay)) {
+    if (v.total > 0) dayStatus[k] = v.done === v.total ? "done" : "partial";
+  }
+
   const { data: employeeRows } = await supabase
     .from("employees")
     .select("id, name")
@@ -110,6 +148,7 @@ export default async function ListaZadanPage({
         completedIds={completedIds}
         completions={completions}
         selectedDate={selectedDate}
+        dayStatus={dayStatus}
       />
     </div>
   );
