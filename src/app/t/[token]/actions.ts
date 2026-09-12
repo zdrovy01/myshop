@@ -252,3 +252,52 @@ export async function updateCompletion(input: {
     photoUrl,
   };
 }
+
+// Працівник повідомляє про пошкоджений товар: 3–5 фото + опис.
+export async function reportDamaged(input: {
+  token: string;
+  note: string;
+  photosBase64: string[];
+}): Promise<{ ok: true } | { error: string }> {
+  const supabase = createAdminClient();
+
+  const { data: user } = await supabase
+    .from("users")
+    .select("id")
+    .eq("qr_token", input.token)
+    .maybeSingle();
+  if (!user) return { error: "Nieprawidłowy link." };
+
+  const photos = input.photosBase64.filter(Boolean);
+  if (photos.length < 3 || photos.length > 5) {
+    return { error: "Dodaj od 3 do 5 zdjęć." };
+  }
+
+  const urls: string[] = [];
+  for (let i = 0; i < photos.length; i++) {
+    const match = photos[i].match(/^data:(image\/\w+);base64,(.+)$/);
+    if (!match) continue;
+    const contentType = match[1];
+    const bytes = Buffer.from(match[2], "base64");
+    const ext = contentType.split("/")[1];
+    const path = `${user.id}/damaged/${Date.now()}-${i}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("task-photos")
+      .upload(path, bytes, { contentType });
+    if (!upErr) {
+      urls.push(
+        supabase.storage.from("task-photos").getPublicUrl(path).data.publicUrl,
+      );
+    }
+  }
+  if (urls.length < 3) return { error: "Nie udało się przesłać zdjęć." };
+
+  const { error } = await supabase.from("damaged_items").insert({
+    user_id: user.id,
+    note: input.note.trim() || null,
+    photo_urls: urls,
+  });
+  if (error) return { error: "Nie udało się zapisać." };
+
+  return { ok: true };
+}

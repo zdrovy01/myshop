@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Modal from "@/components/Modal";
 import PhotoThumb from "@/components/PhotoThumb";
-import { addDoneTask, completeTask, updateCompletion } from "./actions";
+import {
+  addDoneTask,
+  completeTask,
+  reportDamaged,
+  updateCompletion,
+} from "./actions";
 
 export type PublicTask = {
   id: string;
@@ -147,6 +152,52 @@ export default function PublicTasksList({
   const [addPin, setAddPin] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
   const [addLoading, setAddLoading] = useState(false);
+
+  // Пошкоджений товар: 3–5 фото + опис.
+  const [dmgOpen, setDmgOpen] = useState(false);
+  const [dmgPhotos, setDmgPhotos] = useState<string[]>([]);
+  const [dmgNote, setDmgNote] = useState("");
+  const [dmgError, setDmgError] = useState<string | null>(null);
+  const [dmgLoading, setDmgLoading] = useState(false);
+  const [dmgDone, setDmgDone] = useState(false);
+
+  function openDamaged() {
+    setDmgPhotos([]);
+    setDmgNote("");
+    setDmgError(null);
+    setDmgDone(false);
+    setDmgOpen(true);
+  }
+
+  async function onDamagedPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    for (const file of files) {
+      if (dmgPhotos.length >= 5) break;
+      const url = await fileToDataUrl(file);
+      setDmgPhotos((prev) => (prev.length >= 5 ? prev : [...prev, url]));
+    }
+  }
+
+  async function submitDamaged() {
+    setDmgError(null);
+    if (dmgPhotos.length < 3 || dmgPhotos.length > 5) {
+      setDmgError("Zrób od 3 do 5 zdjęć produktu.");
+      return;
+    }
+    setDmgLoading(true);
+    const res = await reportDamaged({
+      token,
+      note: dmgNote,
+      photosBase64: dmgPhotos,
+    });
+    setDmgLoading(false);
+    if ("error" in res) {
+      setDmgError(res.error);
+      return;
+    }
+    setDmgDone(true);
+  }
 
   function openAdd() {
     setAddOpen(true);
@@ -343,13 +394,22 @@ export default function PublicTasksList({
     <>
       <div className="mb-5 flex items-center justify-between gap-3 sm:mb-6">
         <h1 className="text-2xl font-semibold text-gray-100">Lista zadań</h1>
-        <button
-          type="button"
-          onClick={openAdd}
-          className="shrink-0 rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c]"
-        >
-          Dodaj
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={openDamaged}
+            className="rounded-[4px] bg-rose-500/15 px-4 py-2 text-sm font-medium text-rose-300 transition-colors hover:bg-rose-500/25"
+          >
+            Uszkodzone
+          </button>
+          <button
+            type="button"
+            onClick={openAdd}
+            className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#2c2c2c]"
+          >
+            Dodaj
+          </button>
+        </div>
       </div>
 
       {items.length === 0 && (
@@ -685,6 +745,117 @@ export default function PublicTasksList({
               </button>
             </div>
           </form>
+        </Modal>
+      )}
+
+      {/* Пошкоджений товар */}
+      {dmgOpen && (
+        <Modal
+          title="Uszkodzony towar"
+          onClose={() => setDmgOpen(false)}
+        >
+          {dmgDone ? (
+            <div className="flex flex-col items-center gap-4 py-4 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </div>
+              <p className="text-sm text-gray-200">
+                Zgłoszenie wysłane. Dziękujemy!
+              </p>
+              <button
+                type="button"
+                onClick={() => setDmgOpen(false)}
+                className="rounded-[4px] bg-[#212121] px-4 py-2 text-sm font-medium text-white hover:bg-[#2c2c2c]"
+              >
+                Zamknij
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-gray-400">
+                Zrób <span className="font-medium text-gray-200">3–5 zdjęć</span>{" "}
+                jednego uszkodzonego produktu.
+              </p>
+
+              <div className="grid grid-cols-3 gap-2">
+                {dmgPhotos.map((src, i) => (
+                  <div key={i} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={src}
+                      alt={`Zdjęcie ${i + 1}`}
+                      className="h-24 w-full rounded-[4px] border border-[#26262b] object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDmgPhotos((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                      aria-label="Usuń zdjęcie"
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-white"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {dmgPhotos.length < 5 && (
+                  <label className="flex h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-[4px] border border-dashed border-[#34343c] text-gray-400 hover:bg-[#2c2c2c]">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                      <circle cx="12" cy="13" r="4" />
+                    </svg>
+                    <span className="text-[11px]">Zrób zdjęcie</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      multiple
+                      onChange={onDamagedPhoto}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+              <p className="text-xs text-gray-500">
+                Dodano zdjęć: {dmgPhotos.length} / 5
+              </p>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-gray-200">
+                  Opis (opcjonalnie)
+                </label>
+                <textarea
+                  value={dmgNote}
+                  onChange={(e) => setDmgNote(e.target.value)}
+                  rows={2}
+                  placeholder="Np. Rozbita butelka, zgnieciony karton…"
+                  className="resize-none rounded-[4px] border border-[#34343c] px-3 py-2.5 text-sm outline-none focus:border-gray-400"
+                />
+              </div>
+
+              {dmgError && <p className="text-sm text-red-400">{dmgError}</p>}
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDmgOpen(false)}
+                  className="rounded-[4px] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2c2c2c]"
+                >
+                  Anuluj
+                </button>
+                <button
+                  type="button"
+                  onClick={submitDamaged}
+                  disabled={dmgLoading || dmgPhotos.length < 3}
+                  className="rounded-[4px] bg-rose-600 px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                >
+                  {dmgLoading ? "..." : "Wyślij"}
+                </button>
+              </div>
+            </div>
+          )}
         </Modal>
       )}
 
