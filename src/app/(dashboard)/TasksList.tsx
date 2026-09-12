@@ -112,12 +112,14 @@ export default function TasksList({
   completedIds = [],
   completions = {},
   selectedDate: selectedDateIso,
+  today,
   dayStatus = {},
 }: {
   initial: Task[];
   completedIds?: string[];
   completions?: Record<string, Completion>;
   selectedDate: string; // YYYY-MM-DD
+  today: string; // YYYY-MM-DD (за Варшавою, з сервера)
   dayStatus?: Record<string, "done" | "partial">;
 }) {
   const router = useRouter();
@@ -135,18 +137,15 @@ export default function TasksList({
   const [y, m, d] = selectedDateIso.split("-").map(Number);
   const selectedDate = new Date(y, m - 1, d);
 
-  // Вікно: минулий тиждень … +2 дні.
-  const minDate = new Date();
+  // Вікно: минулий тиждень … +2 дні (від «сьогодні» з сервера — детерміновано).
+  const [tyy, tmm, tdd] = today.split("-").map(Number);
+  const minDate = new Date(tyy, tmm - 1, tdd);
   minDate.setDate(minDate.getDate() - 7);
-  const maxDate = new Date();
+  const maxDate = new Date(tyy, tmm - 1, tdd);
   maxDate.setDate(maxDate.getDate() + 2);
 
   // Минулі дні лише для перегляду — bez edycji i dodawania.
-  const todayIso = (() => {
-    const t = new Date();
-    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
-  })();
-  const isPast = selectedDateIso < todayIso;
+  const isPast = selectedDateIso < today;
 
   const dateLabel = new Intl.DateTimeFormat("pl-PL", {
     day: "numeric",

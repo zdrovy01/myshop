@@ -148,6 +148,7 @@ export default async function ListaZadanPage({
         completedIds={completedIds}
         completions={completions}
         selectedDate={selectedDate}
+        today={todayStr}
         dayStatus={dayStatus}
       />
     </div>

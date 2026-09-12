@@ -193,11 +193,16 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
         </Modal>
       )}
 
-      <ul className="-mx-8 flex flex-col">
+      {employees.length === 0 ? (
+        <p className="rounded-2xl border border-[#26262b] bg-[#212121] px-4 py-6 text-center text-sm text-gray-400">
+          Brak pracowników.
+        </p>
+      ) : (
+        <ul className="divide-y divide-[#26262b] overflow-hidden rounded-2xl border border-[#26262b] bg-[#212121]">
         {employees.map((employee, index) => (
           <li
             key={employee.id}
-            className="flex items-center justify-between gap-2 bg-[#212121] px-8 py-4 transition-colors hover:bg-[#2c2c2c]"
+            className="flex items-center justify-between gap-2 px-4 py-4 transition-colors hover:bg-[#2c2c2c]"
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2c2c2c] text-sm font-semibold text-gray-300">
@@ -232,7 +237,8 @@ export default function EmployeesList({ initial }: { initial: Employee[] }) {
             </div>
           </li>
         ))}
-      </ul>
+        </ul>
+      )}
     </>
   );
 }

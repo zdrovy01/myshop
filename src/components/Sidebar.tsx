@@ -140,6 +140,27 @@ function PodgladIcon() {
   );
 }
 
+function GrafikIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="shrink-0"
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+      <path d="M12 14v3M8.5 15.5h7" />
+    </svg>
+  );
+}
+
 type NavItem = {
   label: string;
   href: string;
@@ -149,6 +170,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: "Lista zadań", href: "/", icon: <ListaZadanIcon /> },
+  { label: "Grafik pracy", href: "/schedule", icon: <GrafikIcon /> },
   { label: "Pracownicy", href: "/employees", icon: <PracownikiIcon /> },
   { label: "Ustawienia", href: "/settings", icon: <UstawieniaIcon /> },
   { label: "Subskrypcja", href: "/subscription", icon: <SubskrypcjaIcon /> },
@@ -160,6 +182,7 @@ type SidebarUser = {
   shopName: string | null;
   shopAddress: string | null;
   qrToken: string | null;
+  showSchedule?: boolean;
 };
 
 export default function Sidebar({ user }: { user?: SidebarUser | null }) {
@@ -187,6 +210,7 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
 
   const pageTitles: Record<string, string> = {
     "/": "Lista zadań",
+    "/schedule": "Grafik pracy",
     "/employees": "Pracownicy",
     "/settings": "Ustawienia",
     "/settings/account": "Ustawienia konta",
@@ -199,19 +223,25 @@ export default function Sidebar({ user }: { user?: SidebarUser | null }) {
   // Розгорнутий вигляд: десктоп-панель відкрита АБО відкрита мобільна шухляда.
   const expanded = open || mobileOpen;
 
-  // Список пунктів + посилання на публічний вигляд для працівників (нова вкладка).
+  // Пункти меню (за потреби ховаємо «Grafik pracy»).
+  const baseItems =
+    user?.showSchedule === false
+      ? navItems.filter((i) => i.href !== "/schedule")
+      : navItems;
+
+  // + посилання на публічний вигляд для працівників (нова вкладка) після «Lista zadań».
   const navList: NavItem[] = user?.qrToken
     ? [
-        navItems[0],
+        ...baseItems.slice(0, 1),
         {
           label: "Widok pracownika",
           href: `/t/${user.qrToken}`,
           icon: <PodgladIcon />,
           external: true,
         },
-        ...navItems.slice(1),
+        ...baseItems.slice(1),
       ]
-    : navItems;
+    : baseItems;
 
   return (
     <>

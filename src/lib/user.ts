@@ -8,6 +8,7 @@ export type CurrentUser = {
   shopName: string | null;
   shopAddress: string | null;
   qrToken: string | null;
+  showSchedule: boolean;
 };
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -23,6 +24,17 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 
   if (!data) return null;
 
+  // Налаштування — best-effort (не ламає авторизацію, якщо колонки ще нема).
+  let showSchedule = true;
+  const { data: pref } = await supabase
+    .from("users")
+    .select("show_schedule")
+    .eq("id", userId)
+    .maybeSingle();
+  if (pref && typeof pref.show_schedule === "boolean") {
+    showSchedule = pref.show_schedule;
+  }
+
   return {
     firstName: data.first_name,
     lastName: data.last_name,
@@ -30,5 +42,6 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     shopName: data.shop_name,
     shopAddress: data.shop_address,
     qrToken: data.qr_token,
+    showSchedule,
   };
 }
